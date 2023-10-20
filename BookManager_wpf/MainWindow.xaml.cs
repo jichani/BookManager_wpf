@@ -12,6 +12,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using BookManager_wpf.Models;
 
 namespace BookManager_wpf
 {
@@ -40,7 +41,13 @@ namespace BookManager_wpf
                     {
                         foreach (var book in books)
                         {
+                            int totalBookCount = books.Sum(book => book.Quantity);
+                            int totalBookTypes = books.Count;
+
+                            lblTotalBooks.Content = $"전체 도서 수 : {totalBookTypes}종, 총 {totalBookCount}권";
+
                             bookStatusGrid.ItemsSource = books;
+                            bookStatusAdminGrid.ItemsSource = books;
                         }
                     }
                     else
@@ -52,7 +59,11 @@ namespace BookManager_wpf
                     {
                         foreach (var member in members)
                         {
+                            int totalMemberCount = members.Count;
+                            lblTotalMembers.Content = $"전체 회원 수 : {totalMemberCount}명";
+
                             memberStatusGrid.ItemsSource = members;
+                            memberStatusAdminGrid.ItemsSource = members;
                         }
                     }
                     else
@@ -61,6 +72,22 @@ namespace BookManager_wpf
                     }
                 }));
             });
+        }
+
+        private void BookStatusAdminGrid_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (bookStatusAdminGrid.SelectedItem is not null)
+            {
+                var selectedBook = (Books)bookStatusAdminGrid.SelectedItem;
+                txtBookIdAdmin.Text = selectedBook.BookId.ToString();
+                txtTitleAdmin.Text = selectedBook.Title;
+                txtCategoryAdmin.Text = selectedBook.Category;
+                txtAuthorAdmin.Text = selectedBook.Author;
+                txtDescriptionAdmin.Text = selectedBook.Description;
+                txtPublisherAdmin.Text = selectedBook.Publisher;
+                txtPublicationDateAdmin.Text = selectedBook.PublicationDate;
+                txtQuantityDateAdmin.Text = selectedBook.Quantity.ToString();
+            }
         }
     }
 

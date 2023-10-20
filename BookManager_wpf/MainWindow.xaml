@@ -25,11 +25,11 @@
                         
                         <GroupBox Header="도서관 현황" Grid.Column="0" Margin="10,10,10,10">
                             <StackPanel>
-                                <Label Content="전체 도서 수 :" Margin="0, 5"/>
-                                <Label Content="전체 회원 수 :" Margin="0, 5"/>
-                                <Label Content="대출 가능한 도서 수 :" Margin="0, 5"/>
-                                <Label Content="대출 중인 도서 수 :" Margin="0, 5"/>
-                                <Label Content="연체 중인 도서 수 :" Margin="0, 5"/>
+                                <Label Name="lblTotalBooks" Content="전체 도서 수 :" Margin="0, 4"/>
+                                <Label Name="lblTotalMembers" Content="전체 회원 수 :" Margin="0, 4"/>
+                                <Label Name="lblAvailableBooks" Content="대출 가능한 도서 수 :" Margin="0, 4"/>
+                                <Label Name="lblBorrowedBooks" Content="대출 중인 도서 수 :" Margin="0, 4"/>
+                                <Label Name="lblOverdueBooks" Content="연체 중인 도서 수 :" Margin="0, 4"/>
                             </StackPanel>
                         </GroupBox>
 
@@ -37,7 +37,7 @@
                             <StackPanel>
                                 
                                 <StackPanel HorizontalAlignment="Center" Orientation="Horizontal" Margin="10, 15">
-                                    <Label Content="도서 번호" Margin="0,0,10,0"/>
+                                    <Label Content="도서번호" Margin="0,0,10,0"/>
                                     <TextBox Width="170" Margin="0,0,10,0"/>
                                     <Button Content="대여" Width="80"/>
                                 </StackPanel>
@@ -105,7 +105,18 @@
                     </Grid.ColumnDefinitions>
 
                     <GroupBox Grid.Column="0" Header="도서 현황" Margin="5,10">
-                        <DataGrid Name="bookDataGrid" AutoGenerateColumns="False">
+                        <DataGrid Name="bookStatusAdminGrid" AutoGenerateColumns="False" IsReadOnly="True" SelectionChanged="BookStatusAdminGrid_SelectionChanged">
+                            <DataGrid.Columns>
+                                <DataGridTextColumn Header="도서번호" Binding="{Binding BookId}" />
+                                <DataGridTextColumn Header="제목" Binding="{Binding Title}" Width="140"/>
+                                <DataGridTextColumn Header="분류" Binding="{Binding Category}" Width="60"/>
+                                <DataGridTextColumn Header="저자" Binding="{Binding Author}"  Width="60"/>
+                                <DataGridTextColumn Header="설명" Binding="{Binding Description}" Width="120"/>
+                                <DataGridTextColumn Header="출판사" Binding="{Binding Publisher}" Width="60"/>
+                                <DataGridTextColumn Header="출판일" Binding="{Binding PublicationDate}" Width="80"/>
+                                <DataGridTextColumn Header="수량" Binding="{Binding Quantity}" Width="40"/>
+                                <DataGridTextColumn Header="등록일" Binding="{Binding RegisteredDate}" Width="140"/>
+                            </DataGrid.Columns>
                         </DataGrid>
                     </GroupBox>
 
@@ -120,43 +131,43 @@
                                 <StackPanel Height="440" HorizontalAlignment="Center" VerticalAlignment="Center">
 
                                     <StackPanel HorizontalAlignment="Left" Orientation="Horizontal" Margin="10, 10">
-                                        <Label Width="66" HorizontalAlignment="Center" Content="도서 번호" Margin="0,0,10,0"/>
-                                        <TextBox Width="210" Margin="0,0,10,0"/>
+                                        <Label Width="66" HorizontalAlignment="Center" Content="도서번호" Margin="0,0,10,0"/>
+                                        <TextBox Name ="txtBookIdAdmin" VerticalAlignment="Center" Width="210" Margin="0,0,10,0" IsReadOnly="True"/>
                                     </StackPanel>
 
                                     <StackPanel HorizontalAlignment="Left" Orientation="Horizontal" Margin="10, 10">
                                         <Label Width="66" HorizontalAlignment="Center" Content="도서명" Margin="0,0,10,0"/>
-                                        <TextBox Width="210" Margin="0,0,10,0"/>
+                                        <TextBox Name ="txtTitleAdmin" VerticalAlignment="Center" Width="210" Margin="0,0,10,0"/>
                                     </StackPanel>
 
                                     <StackPanel HorizontalAlignment="Left" Orientation= "Horizontal" Margin="10, 10">
                                         <Label Width="66" HorizontalAlignment="Center" Content="분류" Margin="0,0,10,0"/>
-                                        <TextBox Width="210" Margin="0,0,10,0"/>
+                                        <TextBox Name ="txtCategoryAdmin" VerticalAlignment="Center" Width="210" Margin="0,0,10,0"/>
                                     </StackPanel >
 
                                     <StackPanel HorizontalAlignment="Left" Orientation= "Horizontal" Margin="10, 10">
                                         <Label Width="66" HorizontalAlignment="Center" Content="저자" Margin="0,0,10,0"/>
-                                        <TextBox Width="210" Margin="0,0,10,0"/>
+                                        <TextBox Name ="txtAuthorAdmin" VerticalAlignment="Center" Width="210" Margin="0,0,10,0"/>
                                     </StackPanel >
 
                                     <StackPanel HorizontalAlignment="Left" Orientation= "Horizontal" Margin="10, 10">
                                         <Label Width="66" HorizontalAlignment="Center" Content="설명" Margin="0,0,10,0"/>
-                                        <TextBox Width="210" Margin="0,0,10,0"/>
+                                        <TextBox Name ="txtDescriptionAdmin" VerticalAlignment="Center" Width="210" Margin="0,0,10,0" Height="40" TextWrapping="Wrap"/>
                                     </StackPanel >
 
                                     <StackPanel HorizontalAlignment="Left" Orientation= "Horizontal" Margin="10, 10">
                                         <Label Width="66" HorizontalAlignment="Center" Content="출판사" Margin="0,0,10,0"/>
-                                        <TextBox Width="210" Margin="0,0,10,0"/>
+                                        <TextBox Name ="txtPublisherAdmin" VerticalAlignment="Center" Width="210" Margin="0,0,10,0"/>
                                     </StackPanel >
 
                                     <StackPanel HorizontalAlignment="Left" Orientation= "Horizontal" Margin="10, 10">
                                         <Label Width="66" HorizontalAlignment="Center" Content="출판일" Margin="0,0,10,0"/>
-                                        <TextBox Width="210" Margin="0,0,10,0"/>
+                                        <TextBox Name ="txtPublicationDateAdmin" VerticalAlignment="Center" Width="210" Margin="0,0,10,0"/>
                                     </StackPanel >
 
                                     <StackPanel HorizontalAlignment="Left" Orientation= "Horizontal" Margin="10, 10">
                                         <Label Width="66" HorizontalAlignment="Center" Content="보유권수" Margin="0,0,10,0"/>
-                                        <TextBox Width="210" Margin="0,0,10,0"/>
+                                        <TextBox Name ="txtQuantityDateAdmin" VerticalAlignment="Center" Width="210" Margin="0,0,10,0"/>
                                     </StackPanel >
 
                                     <StackPanel HorizontalAlignment="Left" Orientation= "Horizontal" Margin="10, 15">
@@ -195,7 +206,13 @@
                     </Grid.ColumnDefinitions>
 
                     <GroupBox Grid.Column="0" Header="사용자 현황" Margin="5,10">
-                        <DataGrid Name="userDataGrid" AutoGenerateColumns="False">
+                        <DataGrid Name="memberStatusAdminGrid" AutoGenerateColumns="False" IsReadOnly="True">
+                            <DataGrid.Columns>
+                                <DataGridTextColumn Header="사용자 ID" Binding="{Binding MemberId}" Width="140"/>
+                                <DataGridTextColumn Header="이름" Binding="{Binding Name}" Width="140"/>
+                                <DataGridTextColumn Header="번호" Binding="{Binding MobileNumber}" Width="140"/>
+                                <DataGridTextColumn Header="등록일" Binding="{Binding CreatedDate}"  Width="140"/>
+                            </DataGrid.Columns>
                         </DataGrid>
                     </GroupBox>
 

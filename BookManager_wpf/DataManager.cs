@@ -4,6 +4,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using MySql.Data.MySqlClient;
+using BookManager_wpf.Models;
+
 
 namespace BookManager_wpf
 {

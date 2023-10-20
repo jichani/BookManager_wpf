@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BookManager_wpf
+namespace BookManager_wpf.Models
 {
     public class Books
     {

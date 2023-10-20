@@ -16,7 +16,6 @@
                         <RowDefinition Height="*"/>
                     </Grid.RowDefinitions>
 
-                    <!-- First Grid -->
                     <Grid Grid.Row="0">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="1*" />
@@ -37,20 +36,19 @@
 
                         <GroupBox Header="대여 / 반납" Grid.Column="1" Margin="10,10,10,10">
                             <StackPanel>
-                                <!-- First Set -->
+                                
                                 <StackPanel HorizontalAlignment="Center" Orientation="Horizontal" Margin="10, 15">
                                     <Label Content="도서 번호" Margin="0,0,10,0"/>
                                     <TextBox Width="170" Margin="0,0,10,0"/>
                                     <Button Content="대여" Width="80"/>
                                 </StackPanel>
-                                <!-- Second Set -->
+                                
                                 <StackPanel HorizontalAlignment="Center" Orientation="Horizontal" Margin="10, 15">
                                     <Label Content="도서 이름" Margin="0,0,10,0"/>
                                     <TextBox Width="170" Margin="0,0,10,0"/>
                                     <Button Content="반납" Width="80"/>
                                 </StackPanel>
 
-                                <!-- Third Set -->
                                 <StackPanel HorizontalAlignment="Center" Orientation= "Horizontal" Margin="10, 15">
                                     <Label Content="사용자 ID" Margin="0,0,10,0"/>
                                     <TextBox Width="170" Margin="0,0,10,0"/>
@@ -65,7 +63,6 @@
 
                     </Grid>
 
-                    <!-- Second Grid -->
                     <Grid Grid.Row="1">
                         <GroupBox Header="도서현황">
                             <DataGrid Name="bookStatuGrid" AutoGenerateColumns="False">
@@ -73,7 +70,6 @@
                         </GroupBox>
                     </Grid>
                     
-                    <!-- Third Grid -->
                     <Grid Grid.Row="2">
                         <GroupBox Header="사용자현황">
                             <DataGrid Name="userStatusGrid" AutoGenerateColumns="False">

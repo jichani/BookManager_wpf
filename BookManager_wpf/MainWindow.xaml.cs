@@ -20,9 +20,29 @@ namespace BookManager_wpf
     /// </summary>
     public partial class MainWindow : Window
     {
+        private DataManager dataManager;
+
         public MainWindow()
         {
             InitializeComponent();
+
+            // Create DataManager instance
+            dataManager = new DataManager();
+
+            // Connect to database and execute query (in a separate task)
+            Task.Run(() =>
+            {
+                bool isConnected = dataManager.ConnectToDatabase();
+
+                Application.Current.Dispatcher.Invoke(new Action(() =>
+                {
+                    if (isConnected)
+                        MessageBox.Show("Connected to database successfully.");
+                    else
+                        MessageBox.Show("Failed to connect to database.");
+                }));
+
+            });
         }
     }
 }

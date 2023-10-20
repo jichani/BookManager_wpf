@@ -74,7 +74,7 @@ namespace BookManager_wpf
             });
         }
 
-        private void BookStatusAdminGrid_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        private void bookStatusAdminGrid_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             if (bookStatusAdminGrid.SelectedItem is not null)
             {
@@ -89,6 +89,36 @@ namespace BookManager_wpf
                 txtQuantityDateAdmin.Text = selectedBook.Quantity.ToString();
             }
         }
-    }
 
+        private void memberStatusAdminGrid_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (memberStatusAdminGrid.SelectedItem is not null)
+            {
+                var selectedMember = (Members)memberStatusAdminGrid.SelectedItem;
+                txtMemberIdAdmin.Text = selectedMember.MemberId.ToString();
+                txtMemberNameAdmin.Text = selectedMember.Name;
+                txtMemberMobileAdmin.Text = selectedMember.MobileNumber;
+            }
+        }
+
+        private void bookStatusGrid_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (bookStatusGrid.SelectedItem is not null)
+            {
+                var selectedBook = (Books)bookStatusGrid.SelectedItem;
+                txtBookId.Text = selectedBook.BookId.ToString();
+                txtBookTitle.Text = selectedBook.Title;
+            }
+        }
+
+        private void memberStatusGrid_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (memberStatusGrid.SelectedItem is not null)
+            {
+                var selectedMember = (Members)memberStatusGrid.SelectedItem;
+                txtMemberId.Text = selectedMember.MemberId.ToString();
+                txtMemberName.Text = selectedMember.Name;
+            }
+        }
+    }
 }

@@ -64,14 +64,31 @@
 
                     <Grid Grid.Row="1">
                         <GroupBox Header="도서현황">
-                            <DataGrid Name="bookStatuGrid" AutoGenerateColumns="False">
+                            <DataGrid Name="bookStatusGrid" AutoGenerateColumns="False" IsReadOnly="True">
+                                <DataGrid.Columns>
+                                    <DataGridTextColumn Header="도서번호" Binding="{Binding BookId}" />
+                                    <DataGridTextColumn Header="제목" Binding="{Binding Title}" Width="140"/>
+                                    <DataGridTextColumn Header="분류" Binding="{Binding Category}" Width="60"/>
+                                    <DataGridTextColumn Header="저자" Binding="{Binding Author}"  Width="60"/>
+                                    <DataGridTextColumn Header="설명" Binding="{Binding Description}" Width="520"/>
+                                    <DataGridTextColumn Header="출판사" Binding="{Binding Publisher}" Width="60"/>
+                                    <DataGridTextColumn Header="출판일" Binding="{Binding PublicationDate}" Width="80"/>
+                                    <DataGridTextColumn Header="수량" Binding="{Binding Quantity}" Width="40"/>
+                                    <DataGridTextColumn Header="등록일" Binding="{Binding RegisteredDate}" Width="140"/>
+                                </DataGrid.Columns>
                             </DataGrid>
                         </GroupBox>
                     </Grid>
                     
                     <Grid Grid.Row="2">
                         <GroupBox Header="사용자현황">
-                            <DataGrid Name="userStatusGrid" AutoGenerateColumns="False">
+                            <DataGrid Name="memberStatusGrid" AutoGenerateColumns="False" IsReadOnly="True">
+                                <DataGrid.Columns>
+                                    <DataGridTextColumn Header="사용자 ID" Binding="{Binding MemberId}" Width="140"/>
+                                    <DataGridTextColumn Header="이름" Binding="{Binding Name}" Width="140"/>
+                                    <DataGridTextColumn Header="번호" Binding="{Binding MobileNumber}" Width="140"/>
+                                    <DataGridTextColumn Header="등록일" Binding="{Binding CreatedDate}"  Width="140"/>
+                                </DataGrid.Columns>
                             </DataGrid>
                         </GroupBox>
                     </Grid>

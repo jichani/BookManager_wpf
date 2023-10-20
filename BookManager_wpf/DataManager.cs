@@ -7,22 +7,6 @@ using MySql.Data.MySqlClient;
 
 namespace BookManager_wpf
 {
-    public class Books
-    {
-        public int BookId { get; set; } // 책 ID
-        public string Title { get; set; } // 책 제목
-        public string Category { get; set; } // 카테고리 
-        public string Author { get; set; } // 저자 
-        public string Description { get; set; }  // 설명 
-        public string Publisher { get; set; }  // 출판사 
-        public string PublicationDate { get; set; }  // 출판일 (문자열)
-        public int Quantity { get; set; }  // 수량 
-        public DateTime RegisteredDate { get; set; }  // 등록일  
-        public override string ToString()
-        {
-            return $"ID: {BookId}, Title: {Title}, Category: {Category}, Author: {Author}, Description: {Description}, Publisher: {Publisher}, PublicationDate: {PublicationDate}, Quantity: {Quantity}, RegisteredDate:{RegisteredDate}";
-        }
-    }
 
     internal class DataManager
     {
@@ -36,7 +20,7 @@ namespace BookManager_wpf
         /// 각 객체는 books 테이블의 한 행에 해당한다.
         /// </summary>
         /// <returns>Books 객체의 리스트</returns>
-        public List<Books> Load()
+        public List<Books> LoadBooks()
         {
             var books = new List<Books>();
 
@@ -64,12 +48,41 @@ namespace BookManager_wpf
                             Quantity = reader.GetInt32(7),
                             RegisteredDate = reader.GetDateTime(8)
                         };
-
                         books.Add(book);
                     }
                 }
-
                 return books;
+            }
+        }
+
+        public List<Members> LoadMembers()
+        {
+            var members = new List<Members>();
+
+            using (var connection = new MySqlConnection(connectionString))
+            {
+                connection.Open();
+
+                string query = "SELECT * FROM members";
+
+                MySqlCommand cmd = new MySqlCommand(query, connection);
+
+                using (var reader = cmd.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        var member = new Members
+                        {
+                            MemberId = reader.GetInt32(0),
+                            Name = reader.GetString(1),
+                            MobileNumber = reader.GetString(2),
+                            CreatedDate = reader.GetDateTime(3)
+                        };
+                        members.Add(member);
+                    }
+                }
+
+                return members;
             }
         }
     }

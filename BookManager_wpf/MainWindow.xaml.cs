@@ -26,25 +26,38 @@ namespace BookManager_wpf
         {
             InitializeComponent();
 
-            // Create DataManager instance
+            // DataManager 인스턴스 생성
             dataManager = new DataManager();
 
             Task.Run(() =>
             {
-                var books = dataManager.Load();  // Load books from database
+                var books = dataManager.LoadBooks();  // 데이터베이스에서 책 정보 불러오기
+                var members = dataManager.LoadMembers();  // 데이터베이스에서 회원 정보 불러오기
 
                 Application.Current.Dispatcher.Invoke(new Action(() =>
                 {
-                    if (books.Count > 0)  // If there are any books...
+                    if (books.Count > 0)  // 책 정보가 있으면...
                     {
                         foreach (var book in books)
                         {
-                            MessageBox.Show(book.ToString());  // Display each book's information in a message box.
+                            bookStatusGrid.ItemsSource = books;
                         }
                     }
                     else
                     {
                         MessageBox.Show("No books found.");
+                    }
+
+                    if (members.Count > 0)     //회원 정보가 있으면...
+                    {
+                        foreach (var member in members)
+                        {
+                            memberStatusGrid.ItemsSource = members;
+                        }
+                    }
+                    else
+                    {
+                        MessageBox.Show("No Members found.");
                     }
                 }));
             });

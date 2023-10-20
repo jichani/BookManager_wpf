@@ -29,20 +29,26 @@ namespace BookManager_wpf
             // Create DataManager instance
             dataManager = new DataManager();
 
-            // Connect to database and execute query (in a separate task)
             Task.Run(() =>
             {
-                bool isConnected = dataManager.ConnectToDatabase();
+                var books = dataManager.Load();  // Load books from database
 
                 Application.Current.Dispatcher.Invoke(new Action(() =>
                 {
-                    if (isConnected)
-                        MessageBox.Show("Connected to database successfully.");
+                    if (books.Count > 0)  // If there are any books...
+                    {
+                        foreach (var book in books)
+                        {
+                            MessageBox.Show(book.ToString());  // Display each book's information in a message box.
+                        }
+                    }
                     else
-                        MessageBox.Show("Failed to connect to database.");
+                    {
+                        MessageBox.Show("No books found.");
+                    }
                 }));
-
             });
         }
     }
+
 }

@@ -91,13 +91,30 @@
                     </Grid>
 
                     <Grid Grid.Row="1" Grid.ColumnSpan="2" Margin="0,218,0,0" Grid.RowSpan="2">
-                        <GroupBox Header="사용자현황">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="1*" />
+                            <ColumnDefinition Width="2*"/>
+                        </Grid.ColumnDefinitions>
+                        <GroupBox Header="사용자현황" Grid.Column="0">
                             <DataGrid Name="memberStatusGrid" AutoGenerateColumns="False" IsReadOnly="True" SelectionChanged="MemberStatusGrid_SelectionChanged">
                                 <DataGrid.Columns>
                                     <DataGridTextColumn Header="사용자 ID" Binding="{Binding MemberId}"/>
                                     <DataGridTextColumn Header="이름" Binding="{Binding Name}" Width="80"/>
                                     <DataGridTextColumn Header="번호" Binding="{Binding MobileNumber}" Width="90"/>
                                     <DataGridTextColumn Header="대여가능권수" Binding="{Binding AvailableBookCount}" Width="90"/>
+                                </DataGrid.Columns>
+                            </DataGrid>
+                        </GroupBox>
+                        <GroupBox Header="대여현황" Grid.Column="1">
+                            <DataGrid Name="checkoutStatusGrid" AutoGenerateColumns="False" IsReadOnly="True">
+                                <DataGrid.Columns>
+                                    <DataGridTextColumn Header="사용자 ID" Binding="{Binding MemberId}"/>
+                                    <DataGridTextColumn Header="이름" Binding="{Binding Name}" Width="80"/>
+                                    <DataGridTextColumn Header="도서번호" Binding="{Binding BookId}"/>
+                                    <DataGridTextColumn Header="도서 이름" Binding="{Binding Title}" Width="120"/>
+                                    <DataGridTextColumn Header="대여 날짜" Binding="{Binding CheckoutDate}" Width="120"/>
+                                    <DataGridTextColumn Header="반납 날짜" Binding="{Binding ReturnDate}" Width="120"/>
+                                    <DataGridCheckBoxColumn Header="연체 상태" Binding="{Binding IsOverdue, Mode=OneWay}" />
                                 </DataGrid.Columns>
                             </DataGrid>
                         </GroupBox>

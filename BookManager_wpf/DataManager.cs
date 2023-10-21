@@ -401,18 +401,20 @@ namespace BookManager_wpf
             }
         }
 
-        public bool RentBook(int bookId, int memberId)
+        public bool RentBook(int bookId, int memberId, string bookTitle, string memberName)
         {
             using (var connection = new MySqlConnection(connectionString))
             {
                 connection.Open();
 
-                string query = "INSERT INTO checkouts(book_id, member_id, checkout_date) VALUES(@bookId, @memberId, @checkoutDate)";
+                string query = "INSERT INTO checkouts(book_id, member_id, checkout_date, title, name) VALUES(@bookId, @memberId, @checkoutDate,@bookTitle,@memberName)";
 
                 MySqlCommand cmd = new MySqlCommand(query, connection);
                 cmd.Parameters.AddWithValue("@bookId", bookId);
                 cmd.Parameters.AddWithValue("@memberId", memberId);
                 cmd.Parameters.AddWithValue("@checkoutDate", DateTime.Now);
+                cmd.Parameters.AddWithValue("@bookTitle", bookTitle); // 책 제목 추가
+                cmd.Parameters.AddWithValue("@memberName", memberName); // 회원 이름 추가
 
                 var result = cmd.ExecuteNonQuery();
 
@@ -475,10 +477,12 @@ namespace BookManager_wpf
                         var checkout = new Checkouts
                         {
                             CheckoutId = reader.GetInt32(0),
-                            BookId = reader.GetInt32(1),
                             MemberId = reader.GetInt32(2),
+                            BookId = reader.GetInt32(1),
                             CheckoutDate = reader.GetDateTime(3),
-                            ReturnDate = !reader.IsDBNull(4) ? reader.GetDateTime(4) : (DateTime?)null // null을 처리하기 위해 사용합니다.
+                            ReturnDate = !reader.IsDBNull(4) ? reader.GetDateTime(4) : (DateTime?)null, // null을 처리하기 위해 사용합니다.
+                            Name = reader.GetString(5), // 새로운 코드: 회원 이름 읽기 
+                            Title = reader.GetString(6)  // 새로운 코드: 책 제목 읽기 
                         };
                         checkouts.Add(checkout);
                     }

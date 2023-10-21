@@ -97,6 +97,7 @@ namespace BookManager_wpf
 
                             memberStatusGrid.ItemsSource = members;
                             memberStatusAdminGrid.ItemsSource = members;
+                            checkoutStatusGrid.ItemsSource = checkouts;
                         }
                     }
                     else
@@ -536,7 +537,7 @@ namespace BookManager_wpf
             }
 
             // DataManager의 RentBook 메소드 호출하여 책 대여 처리
-            bool success = dataManager.RentBook(bookId, memberId);
+            bool success = dataManager.RentBook(bookId, memberId, bookTitle, memberName);
 
             if (success)
             {

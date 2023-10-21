@@ -185,6 +185,14 @@ namespace BookManager_wpf
                 return;
             }
 
+            // 수정을 확인합니다.
+            MessageBoxResult result = MessageBox.Show("정말로 수정하실건가요?", "수정 확인", MessageBoxButton.YesNo);
+            if (result == MessageBoxResult.No)
+            {
+                // 사용자가 도서 정보 수정을 원하지 않는 경우, 메서드 실행을 여기서 종료합니다.
+                return;
+            }
+
             // 수정할 Member 객체 생성
             var updatedMemeber = new Members()
             {
@@ -235,6 +243,14 @@ namespace BookManager_wpf
             if (memberToDelete.Name != txtMemberNameAdmin.Text || memberToDelete.MobileNumber != txtMemberMobileAdmin.Text)
             {
                 MessageBox.Show("입력한 이름 또는 연락처가 일치하지 않습니다");
+                return;
+            }
+
+            // 삭제를 확인합니다.
+            MessageBoxResult result = MessageBox.Show("정말로 삭제하실건가요?", "삭제 확인", MessageBoxButton.YesNo);
+            if (result == MessageBoxResult.No)
+            {
+                // 사용자가 도서 삭제를 원하지 않는 경우, 메서드 실행을 여기서 종료합니다.
                 return;
             }
 
@@ -326,6 +342,14 @@ namespace BookManager_wpf
                 return;
             }
 
+            // 수정을 확인합니다.
+            MessageBoxResult result = MessageBox.Show("정말로 수정하실건가요?", "수정 확인", MessageBoxButton.YesNo);
+            if (result == MessageBoxResult.No)
+            {
+                // 사용자가 도서 정보 수정을 원하지 않는 경우, 메서드 실행을 여기서 종료합니다.
+                return;
+            }
+
             existingBook.Title = txtTitleAdmin.Text;
             existingBook.Category = txtCategoryAdmin.Text;
             existingBook.Author = txtAuthorAdmin.Text;
@@ -374,6 +398,14 @@ namespace BookManager_wpf
             if (existingBook == null)
             {
                 MessageBox.Show($"도서번호 {bookId}에 해당하는 도서가 없습니다.");
+                return;
+            }
+
+            // 삭제를 확인합니다.
+            MessageBoxResult result = MessageBox.Show("정말로 삭제하실건가요?", "삭제 확인", MessageBoxButton.YesNo);
+            if (result == MessageBoxResult.No)
+            {
+                // 사용자가 도서 삭제를 원하지 않는 경우, 메서드 실행을 여기서 종료합니다.
                 return;
             }
 

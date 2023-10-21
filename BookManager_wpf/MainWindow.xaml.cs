@@ -539,24 +539,35 @@ namespace BookManager_wpf
             // DataManager의 RentBook 메소드 호출하여 책 대여 처리
             bool success = dataManager.RentBook(bookId, memberId, bookTitle, memberName);
 
-            if (success)
+            if (!success)
             {
-                MessageBox.Show("도서가 성공적으로 대여되었습니다.");
-
-                string logMessage = $"[{DateTime.Now}] 회원 {memberName}이(가) '{bookTitle}' 도서를 대여하였습니다.";
-                checkoutLogs.Items.Insert(0, logMessage);
-
-                // 로그 메시지를 텍스트 파일에 추가
-                using (StreamWriter sw = File.AppendText("checkoutLogs.txt"))
-                {
-                    sw.WriteLine(logMessage);
-                }
-
-                // 필요한 경우 UI 업데이트 등 추가 작업 수행
-                ClearRentalFields();
-                UpdateLabelsAndGrid(bookId);
-                UpdateMembersGrid();
+                MessageBox.Show("동일한 책은 한 번만 대여할 수 있습니다.");
+                return;
             }
+
+            MessageBox.Show("도서가 성공적으로 대여되었습니다.");
+
+            string logMessage = $"[{DateTime.Now}] 회원 {memberName}이(가) '{bookTitle}' 도서를 대여하였습니다.";
+            checkoutLogs.Items.Insert(0, logMessage);
+
+            // 로그 메시지를 텍스트 파일에 추가
+            using (StreamWriter sw = File.AppendText("checkoutLogs.txt"))
+            {
+                sw.WriteLine(logMessage);
+            }
+
+            // 필요한 경우 UI 업데이트 등 추가 작업 수행
+            ClearRentalFields();
+
+            var checkouts = dataManager.LoadCheckouts();  // 데이터베이스에서 체크아웃 정보 불러오기
+
+            // checkoutStatusGrid 업데이트
+            checkoutStatusGrid.ItemsSource = null;
+            checkoutStatusGrid.ItemsSource = checkouts;
+
+            UpdateLabelsAndGrid(bookId);
+            UpdateMembersGrid();
+            
         }
 
         // 새로운 함수: 회원 데이터 그리드 업데이트 
@@ -621,7 +632,15 @@ namespace BookManager_wpf
                     sw.WriteLine(logMessage);
                 }
 
+                // 필요한 경우 UI 업데이트 등 추가 작업 수행
                 ClearRentalFields();
+
+                var checkouts = dataManager.LoadCheckouts();  // 데이터베이스에서 체크아웃 정보 불러오기
+
+                // checkoutStatusGrid 업데이트
+                checkoutStatusGrid.ItemsSource = null;
+                checkoutStatusGrid.ItemsSource = checkouts;
+
                 UpdateLabelsAndGrid(bookId);
                 UpdateMembersGrid();
             }

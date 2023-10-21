@@ -407,20 +407,37 @@ namespace BookManager_wpf
             {
                 connection.Open();
 
-                string query = "INSERT INTO checkouts(book_id, member_id, checkout_date, title, name) VALUES(@bookId, @memberId, @checkoutDate,@bookTitle,@memberName)";
+                // 첫 번째로, 해당 회원이 이미 해당 도서를 대여하고 있는지 확인합니다.
+                string checkQuery = "SELECT COUNT(*) FROM checkouts WHERE book_id=@bookId AND member_id=@memberId AND return_date IS NULL";
+
+                MySqlCommand checkCmd = new MySqlCommand(checkQuery, connection);
+                checkCmd.Parameters.AddWithValue("@bookId", bookId);
+                checkCmd.Parameters.AddWithValue("@memberId", memberId);
+
+                object resultObj = checkCmd.ExecuteScalar();
+
+                // 만약 결과가 1 이상이면 (즉, 같은 책을 빌린 기록이 있다면) false 반환
+                if (Convert.ToInt32(resultObj) > 0)
+                {
+                    return false;
+                }
+
+                // 만약 위의 검사에서 문제가 없다면(즉 같은 책을 빌린 기록이 없다면), 실제로 대출 처리 진행
+                string query = "INSERT INTO checkouts(book_id, member_id, checkout_date, title,name) VALUES(@bookId2,@memberId2,@checkoutDate,@bookTitle,@memberName)";
 
                 MySqlCommand cmd = new MySqlCommand(query, connection);
-                cmd.Parameters.AddWithValue("@bookId", bookId);
-                cmd.Parameters.AddWithValue("@memberId", memberId);
+                cmd.Parameters.AddWithValue("@bookId2", bookId);
+                cmd.Parameters.AddWithValue("@memberId2", memberId);
                 cmd.Parameters.AddWithValue("@checkoutDate", DateTime.Now);
                 cmd.Parameters.AddWithValue("@bookTitle", bookTitle); // 책 제목 추가
                 cmd.Parameters.AddWithValue("@memberName", memberName); // 회원 이름 추가
 
-                var result = cmd.ExecuteNonQuery();
+                var resultInsertion = cmd.ExecuteNonQuery();
 
-                return result > 0;
+                return resultInsertion > 0;
             }
         }
+
         public bool IsBookCheckedOutByMember(int bookId, int memberId)
         {
             using (var connection = new MySqlConnection(connectionString))
@@ -466,7 +483,8 @@ namespace BookManager_wpf
             {
                 connection.Open();
 
-                string query = "SELECT * FROM checkouts";
+                // return_date가 NULL인 레코드만 선택하는 쿼리로 변경
+                string query = "SELECT * FROM checkouts WHERE return_date IS NULL";
 
                 MySqlCommand cmd = new MySqlCommand(query, connection);
 
@@ -481,8 +499,8 @@ namespace BookManager_wpf
                             BookId = reader.GetInt32(1),
                             CheckoutDate = reader.GetDateTime(3),
                             ReturnDate = !reader.IsDBNull(4) ? reader.GetDateTime(4) : (DateTime?)null, // null을 처리하기 위해 사용합니다.
-                            Name = reader.GetString(5), // 새로운 코드: 회원 이름 읽기 
-                            Title = reader.GetString(6)  // 새로운 코드: 책 제목 읽기 
+                            Name = reader.GetString(5),
+                            Title = reader.GetString(6) 
                         };
                         checkouts.Add(checkout);
                     }
@@ -491,6 +509,7 @@ namespace BookManager_wpf
 
             return checkouts;
         }
+
 
         public int GetOverdueBookCount()
         {

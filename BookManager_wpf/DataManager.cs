@@ -486,5 +486,22 @@ namespace BookManager_wpf
             return checkouts;
         }
 
+        public int GetOverdueBookCount()
+        {
+            using (var connection = new MySqlConnection(connectionString))
+            {
+                connection.Open();
+
+                string query = "SELECT COUNT(*) FROM checkouts WHERE checkout_date < @sevenDaysAgo AND return_date IS NULL";
+
+                MySqlCommand cmd = new MySqlCommand(query, connection);
+                cmd.Parameters.AddWithValue("@sevenDaysAgo", DateTime.Now.AddDays(-7));
+
+                var result = Convert.ToInt32(cmd.ExecuteScalar());
+
+                return result;
+            }
+        }
+
     }
 }

@@ -64,11 +64,15 @@ namespace BookManager_wpf
 
                             bookStatusGrid.ItemsSource = books;
                             bookStatusAdminGrid.ItemsSource = books;
+
+                            // 연체 중인 도서 개수 계산 및 업데이트
+                            int overdueBooksCount = dataManager.GetOverdueBookCount();
+                            lblOverdueBooks.Content = $"연체 중인 도서 수 : {overdueBooksCount}권";
                         }
                     }
                     else
                     {
-                        MessageBox.Show("No books found.");
+                        MessageBox.Show("책 정보를 못찾았습니다.");
                     }
 
                     if (members.Count > 0)     //회원 정보가 있으면...
@@ -566,6 +570,9 @@ namespace BookManager_wpf
 
                 // 전체 복사본 수에서 사용 가능한 복사본 수를 뺌으로써 대출 중인 복사본수 계산
                 lblBorrowedBooks.Content = $"대출 중인 도서 수 : {totalCopies - totalAvailableCopies}권";
+
+                int overdueBooksCount = dataManager.GetOverdueBookCount();
+                lblOverdueBooks.Content = $"연체 중인 도서 수 : {overdueBooksCount}권";
             }
         }
 

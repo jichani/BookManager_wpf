@@ -192,13 +192,13 @@
                         <StackPanel Grid.Row="1" >
                             <GroupBox Header="도서 검색" Margin="5,10" >
                                 <StackPanel HorizontalAlignment="Center" Orientation="Horizontal" Margin="10, 10">
-                                    <ComboBox Width="66">
+                                    <ComboBox Width="66" x:Name="BookSearchComboBox">
                                         <ComboBoxItem IsSelected="True">제목</ComboBoxItem>
                                         <ComboBoxItem>분류</ComboBoxItem>
                                         <ComboBoxItem>출판사</ComboBoxItem>
                                     </ComboBox>
-                                    <TextBox Width="200" Margin="10, 0"/>
-                                    <Button Content="검색" Width="62" Margin="0"/>
+                                    <TextBox Width="200" Margin="10, 0" x:Name="BookSearchTextBox" KeyDown="BookSearchTextBox_KeyDown"/>
+                                    <Button Content="검색" Width="62" Margin="0" Click="BookSearchButton_Click"/>
                                 </StackPanel>
                             </GroupBox>
                         </StackPanel>

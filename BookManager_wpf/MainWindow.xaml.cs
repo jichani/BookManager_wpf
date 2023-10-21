@@ -432,5 +432,46 @@ namespace BookManager_wpf
             lblTotalBooks.Content = $"전체 도서 수 : {totalTypesCount}종, 총 {totalQuantityCount}권";
         }
 
+        private void BookSearchButton_Click(object sender, RoutedEventArgs e)
+        {
+            string? selectedField = (BookSearchComboBox.SelectedItem as ComboBoxItem)?.Content.ToString();
+            string searchText = BookSearchTextBox.Text.Trim();
+
+            if (string.IsNullOrEmpty(selectedField) || string.IsNullOrEmpty(searchText))
+            {
+                // 필드 또는 검색어가 비어있으면 모든 도서를 표시합니다.
+                bookStatusAdminGrid.ItemsSource = dataManager.LoadBooks();
+                return;
+            }
+
+            List<Books> filteredBooks;
+
+            switch (selectedField)
+            {
+                case "제목":
+                    filteredBooks = dataManager.SearchBooksByTitle(searchText);
+                    break;
+                case "분류":
+                    filteredBooks = dataManager.SearchBooksByCategory(searchText);
+                    break;
+                case "출판사":
+                    filteredBooks = dataManager.SearchBooksByPublisher(searchText);
+                    break;
+                default:
+                    // 선택된 필드가 없으면 모든 도서를 표시합니다.
+                    bookStatusAdminGrid.ItemsSource = dataManager.LoadBooks();
+                    return;
+            }
+
+            bookStatusAdminGrid.ItemsSource = filteredBooks;
+        }
+
+        private void BookSearchTextBox_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Enter)
+            {
+                BookSearchButton_Click(sender, e);
+            }
+        }
     }
 }

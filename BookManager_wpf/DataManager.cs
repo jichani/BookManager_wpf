@@ -265,6 +265,119 @@ namespace BookManager_wpf
             }
         }
 
+        public List<Books> SearchBooksByTitle(string title)
+        {
+            using (var connection = new MySqlConnection(connectionString))
+            {
+                connection.Open();
+
+                string query = "SELECT * FROM books WHERE title LIKE @title";
+
+                MySqlCommand cmd = new MySqlCommand(query, connection);
+                cmd.Parameters.AddWithValue("@title", $"%{title}%");
+
+                List<Books> books = new List<Books>();
+
+                using (var reader = cmd.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        Books book = new Books
+                        {
+                            BookId = reader.GetInt32("book_id"),
+                            Title = reader.GetString("title"),
+                            Category = reader.GetString("category"),
+                            Author = reader.GetString("author"),
+                            Description = reader.GetString("description"),
+                            Publisher = reader.GetString("publisher"),
+                            PublicationDate = reader.GetString("publication_date"),
+                            Quantity = reader.GetString("quantity"),
+                            RegisteredDate = reader.GetDateTime("registered_date")
+                        };
+
+                        books.Add(book);
+                    }
+                }
+
+                return books;
+            }
+        }
+        public List<Books> SearchBooksByCategory(string category)
+        {
+            using (var connection = new MySqlConnection(connectionString))
+            {
+                connection.Open();
+
+                string query = "SELECT * FROM books WHERE category LIKE @category";
+
+                MySqlCommand cmd = new MySqlCommand(query, connection);
+                cmd.Parameters.AddWithValue("@category", $"%{category}%");
+
+                List<Books> books = new List<Books>();
+
+                using (var reader = cmd.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        Books book = new Books
+                        {
+                            BookId = reader.GetInt32("book_id"),
+                            Title = reader.GetString("title"),
+                            Category = reader.GetString("category"),
+                            Author = reader.GetString("author"),
+                            Description = reader.GetString("description"),
+                            Publisher = reader.GetString("publisher"),
+                            PublicationDate = reader.GetString("publication_date"),
+                            Quantity = reader.GetString("quantity"),
+                            RegisteredDate = reader.GetDateTime("registered_date")
+                        };
+
+                        books.Add(book);
+                    }
+                }
+
+                return books;
+            }
+        }
+        public List<Books> SearchBooksByPublisher(string publisher)
+        {
+            using (var connection = new MySqlConnection(connectionString))
+            {
+                connection.Open();
+
+                string query = "SELECT * FROM books WHERE publisher LIKE @publisher";
+
+                MySqlCommand cmd = new MySqlCommand(query, connection);
+                cmd.Parameters.AddWithValue("@publisher", $"%{publisher}%");
+
+                List<Books> books = new List<Books>();
+
+                using (var reader = cmd.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        Books book = new Books
+                        {
+                            BookId = reader.GetInt32("book_id"),
+                            Title = reader.GetString("title"),
+                            Category = reader.GetString("category"),
+                            Author = reader.GetString("author"),
+                            Description = reader.GetString("description"),
+                            Publisher = reader.GetString("publisher"),
+                            PublicationDate = reader.GetString("publication_date"),
+                            Quantity = reader.GetString("quantity"),
+                            RegisteredDate = reader.GetDateTime("registered_date")
+                        };
+
+                        books.Add(book);
+                    }
+                }
+
+                return books;
+            }
+        }
+
+
 
     }
 }

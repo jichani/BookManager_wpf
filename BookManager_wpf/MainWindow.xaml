@@ -42,7 +42,7 @@
 
                                 <StackPanel HorizontalAlignment="Left" Orientation="Horizontal" Margin="5">
                                     <Label Content="도서번호 " Margin="0,0,10,0"/>
-                                    <TextBox VerticalAlignment="Center" Name="txtBookId" Width="170" Margin="0,0,10,0"/>
+                                    <TextBox VerticalAlignment="Center" Name="txtBookId" Width="170" Margin="0,0,10,0" PreviewTextInput="NumberValidationTextBox"/>
                                     <Button Content="대여" Width="80"/>
                                 </StackPanel>
 
@@ -54,7 +54,7 @@
 
                                 <StackPanel HorizontalAlignment="Left" Orientation= "Horizontal" Margin="5">
                                     <Label Content="사용자 ID" Margin="0,0,10,0"/>
-                                    <TextBox VerticalAlignment="Center" Name="txtMemberId" Width="170" Margin="0,0,10,0"/>
+                                    <TextBox VerticalAlignment="Center" Name="txtMemberId" Width="170" Margin="0,0,10,0" PreviewTextInput="NumberValidationTextBox"/>
                                 </StackPanel >
 
                                 <StackPanel HorizontalAlignment="Left" Orientation= "Horizontal" Margin="5">
@@ -72,7 +72,7 @@
 
                     <Grid Grid.Row="1" Grid.ColumnSpan="2">
                         <GroupBox Header="도서현황">
-                            <DataGrid Name="bookStatusGrid" AutoGenerateColumns="False" IsReadOnly="True" SelectionChanged="bookStatusGrid_SelectionChanged">
+                            <DataGrid Name="bookStatusGrid" AutoGenerateColumns="False" IsReadOnly="True" SelectionChanged="BookStatusGrid_SelectionChanged">
                                 <DataGrid.Columns>
                                     <DataGridTextColumn Header="도서번호" Binding="{Binding BookId}" />
                                     <DataGridTextColumn Header="도서 이름" Binding="{Binding Title}" Width="140"/>
@@ -90,7 +90,7 @@
 
                     <Grid Grid.Row="1" Grid.ColumnSpan="2" Margin="0,218,0,0" Grid.RowSpan="2">
                         <GroupBox Header="사용자현황">
-                            <DataGrid Name="memberStatusGrid" AutoGenerateColumns="False" IsReadOnly="True" SelectionChanged="memberStatusGrid_SelectionChanged">
+                            <DataGrid Name="memberStatusGrid" AutoGenerateColumns="False" IsReadOnly="True" SelectionChanged="MemberStatusGrid_SelectionChanged">
                                 <DataGrid.Columns>
                                     <DataGridTextColumn Header="사용자 ID" Binding="{Binding MemberId}" Width="140"/>
                                     <DataGridTextColumn Header="이름" Binding="{Binding Name}" Width="140"/>
@@ -113,7 +113,7 @@
                     </Grid.ColumnDefinitions>
 
                     <GroupBox Grid.Column="0" Header="도서 현황" Margin="5,10">
-                        <DataGrid Name="bookStatusAdminGrid" AutoGenerateColumns="False" IsReadOnly="True" SelectionChanged="bookStatusAdminGrid_SelectionChanged">
+                        <DataGrid Name="bookStatusAdminGrid" AutoGenerateColumns="False" IsReadOnly="True" SelectionChanged="BookStatusAdminGrid_SelectionChanged">
                             <DataGrid.Columns>
                                 <DataGridTextColumn Header="도서번호" Binding="{Binding BookId}" />
                                 <DataGridTextColumn Header="제목" Binding="{Binding Title}" Width="140"/>
@@ -140,7 +140,7 @@
 
                                     <StackPanel HorizontalAlignment="Left" Orientation="Horizontal" Margin="10, 10">
                                         <Label Width="66" HorizontalAlignment="Center" Content="도서번호" Margin="0,0,10,0"/>
-                                        <TextBox Name ="txtBookIdAdmin" VerticalAlignment="Center" Width="210" Margin="0,0,10,0" IsReadOnly="True"/>
+                                        <TextBox Name ="txtBookIdAdmin" VerticalAlignment="Center" Width="210" Margin="0,0,10,0" PreviewTextInput="NumberValidationTextBox"/>
                                     </StackPanel>
 
                                     <StackPanel HorizontalAlignment="Left" Orientation="Horizontal" Margin="10, 10">
@@ -175,13 +175,13 @@
 
                                     <StackPanel HorizontalAlignment="Left" Orientation= "Horizontal" Margin="10, 10">
                                         <Label Width="66" HorizontalAlignment="Center" Content="보유권수" Margin="0,0,10,0"/>
-                                        <TextBox Name ="txtQuantityDateAdmin" VerticalAlignment="Center" Width="210" Margin="0,0,10,0"/>
+                                        <TextBox Name ="txtQuantityDateAdmin" VerticalAlignment="Center" Width="210" Margin="0,0,10,0" PreviewTextInput="NumberValidationTextBox"/>
                                     </StackPanel >
 
                                     <StackPanel HorizontalAlignment="Left" Orientation= "Horizontal" Margin="10, 15">
-                                        <Button Content="추가" Width="80" Margin="10, 5"/>
-                                        <Button Content="수정" Width="80" Margin="10, 5"/>
-                                        <Button Content="삭제" Width="80" Margin="10, 5"/>
+                                        <Button Content="추가" Width="80" Margin="10, 5" Click="BookAddButton_Click"/>
+                                        <Button Content="수정" Width="80" Margin="10, 5" Click="BookUpdateButton_Click"/>
+                                        <Button Content="삭제" Width="80" Margin="10, 5" Click="BookDeleteButton_Click"/>
                                     </StackPanel>
                                 </StackPanel >
                             </GroupBox>
@@ -214,7 +214,7 @@
                     </Grid.ColumnDefinitions>
 
                     <GroupBox Grid.Column="0" Header="사용자 현황" Margin="5,10">
-                        <DataGrid Name="memberStatusAdminGrid" AutoGenerateColumns="False" IsReadOnly="True" SelectionChanged="memberStatusAdminGrid_SelectionChanged">
+                        <DataGrid Name="memberStatusAdminGrid" AutoGenerateColumns="False" IsReadOnly="True" SelectionChanged="MemberStatusAdminGrid_SelectionChanged">
                             <DataGrid.Columns>
                                 <DataGridTextColumn Header="사용자 ID" Binding="{Binding MemberId}" Width="140"/>
                                 <DataGridTextColumn Header="이름" Binding="{Binding Name}" Width="140"/>
@@ -228,7 +228,7 @@
                         <StackPanel HorizontalAlignment="Center">
                             <StackPanel HorizontalAlignment="Left" Orientation="Horizontal" Margin="10, 15">
                                 <Label Width="66" HorizontalAlignment="Center" Content="사용자 ID" Margin="0,0,10,0"/>
-                                <TextBox Name="txtMemberIdAdmin" VerticalAlignment="Center" IsReadOnly="True" Width="210" Margin="0,0,10,0"/>
+                                <TextBox Name="txtMemberIdAdmin" VerticalAlignment="Center" Width="210" Margin="0,0,10,0" PreviewTextInput="NumberValidationTextBox"/>
                             </StackPanel>
 
                             <StackPanel HorizontalAlignment="Left" Orientation="Horizontal" Margin="10, 15">
@@ -238,13 +238,13 @@
 
                             <StackPanel HorizontalAlignment="Left" Orientation= "Horizontal" Margin="10, 15">
                                 <Label Width="66" HorizontalAlignment="Center" Content="연락처" Margin="0,0,10,0"/>
-                                <TextBox Name="txtMemberMobileAdmin" VerticalAlignment="Center" Width="210" Margin="0,0,10,0"/>
+                                <TextBox Name="txtMemberMobileAdmin" VerticalAlignment="Center" Width="210" Margin="0,0,10,0" PreviewTextInput="NumberValidationTextBox"/>
                             </StackPanel >
 
                             <StackPanel HorizontalAlignment="Left" Orientation= "Horizontal" Margin="10, 15">
-                                <Button Content="추가" Width="80" Margin="10, 5"/>
-                                <Button Content="수정" Width="80" Margin="10, 5"/>
-                                <Button Content="삭제" Width="80" Margin="10, 5"/>
+                                <Button Content="추가" Width="80" Margin="10, 5" Click="MemberAddButton_Click"/>
+                                <Button Content="수정" Width="80" Margin="10, 5" Click="MemberEditButton_Click"/>
+                                <Button Content="삭제" Width="80" Margin="10, 5" Click="MemberDeleteButton_Click"/>
                             </StackPanel>
                         </StackPanel >
                     </GroupBox>

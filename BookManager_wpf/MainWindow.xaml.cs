@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -41,7 +42,14 @@ namespace BookManager_wpf
                     {
                         foreach (var book in books)
                         {
-                            int totalBookCount = books.Sum(book => book.Quantity);
+                            int totalBookCount = books.Sum(book =>
+                            {
+                                int quantity;
+                                if (int.TryParse(book.Quantity, out quantity))
+                                    return quantity;
+                                else
+                                    return 0;
+                            });
                             int totalBookTypes = books.Count;
 
                             lblTotalBooks.Content = $"전체 도서 수 : {totalBookTypes}종, 총 {totalBookCount}권";
@@ -74,7 +82,13 @@ namespace BookManager_wpf
             });
         }
 
-        private void bookStatusAdminGrid_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        private void NumberValidationTextBox(object sender, TextCompositionEventArgs e)
+        {
+            Regex regex = new Regex("[^0-9]+");
+            e.Handled = regex.IsMatch(e.Text);
+        }
+
+        private void BookStatusAdminGrid_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             if (bookStatusAdminGrid.SelectedItem is not null)
             {
@@ -89,8 +103,7 @@ namespace BookManager_wpf
                 txtQuantityDateAdmin.Text = selectedBook.Quantity.ToString();
             }
         }
-
-        private void memberStatusAdminGrid_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        private void MemberStatusAdminGrid_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             if (memberStatusAdminGrid.SelectedItem is not null)
             {
@@ -100,8 +113,7 @@ namespace BookManager_wpf
                 txtMemberMobileAdmin.Text = selectedMember.MobileNumber;
             }
         }
-
-        private void bookStatusGrid_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        private void BookStatusGrid_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             if (bookStatusGrid.SelectedItem is not null)
             {
@@ -110,8 +122,7 @@ namespace BookManager_wpf
                 txtBookTitle.Text = selectedBook.Title;
             }
         }
-
-        private void memberStatusGrid_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        private void MemberStatusGrid_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             if (memberStatusGrid.SelectedItem is not null)
             {
@@ -120,5 +131,274 @@ namespace BookManager_wpf
                 txtMemberName.Text = selectedMember.Name;
             }
         }
+
+        private void MemberAddButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (txtMemberIdAdmin.Text != "")
+            {
+                MessageBox.Show("사용자 ID값을 비워주세요");
+                return;
+            }
+
+            // 새로운 Member 객체 생성
+            var newMember = new Members()
+            {
+                Name = txtMemberNameAdmin.Text,
+                MobileNumber = txtMemberMobileAdmin.Text,
+            };
+
+            // DataManager의 AddNewMemeber 메소드 호출하여 DB에 저장
+            dataManager.AddNewMember(newMember);
+
+            // DB에서 최신 멤버 리스트 불러오기
+            var members = dataManager.LoadMembers();
+
+            // UI 갱신 
+            memberStatusGrid.ItemsSource = members;
+            memberStatusAdminGrid.ItemsSource = members;
+
+            int totalMemberCount = members.Count;
+            lblTotalMembers.Content = $"전체 회원 수 : {totalMemberCount}명";
+        }
+        private void MemberEditButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (txtMemberIdAdmin.Text == "")
+            {
+                MessageBox.Show("사용자 ID값을 입력해주세요");
+                return;
+            }
+
+            int memberId;
+
+            if (!int.TryParse(txtMemberIdAdmin.Text, out memberId))
+            {
+                MessageBox.Show("사용자 ID값은 숫자여야 합니다");
+                return;
+            }
+
+            // DataManager의 GetMemeberById 메소드 호출하여 DB에서 멤버 정보 가져오기
+            var memberToEdit = dataManager.GetMemberById(memberId);
+
+            if (memberToEdit == null)
+            {
+                MessageBox.Show("해당 ID의 회원이 존재하지 않습니다");
+                return;
+            }
+
+            // 수정할 Member 객체 생성
+            var updatedMemeber = new Members()
+            {
+                MemberId = memberId,
+                Name = txtMemberNameAdmin.Text,
+                MobileNumber = txtMemberMobileAdmin.Text,
+            };
+
+            // DataManager의 UpdateMemeber 메소드 호출하여 DB에 저장
+            dataManager.UpdateMember(updatedMemeber);
+
+            // DB에서 최신 멤버 리스트 불러오기
+            var members = dataManager.LoadMembers();
+
+            // UI 갱신 
+            memberStatusGrid.ItemsSource = members;
+            memberStatusAdminGrid.ItemsSource = members;
+
+            int totalMemeberCount = members.Count;
+            lblTotalMembers.Content = $"전체 회원 수 : {totalMemeberCount}명";
+        }
+        private void MemberDeleteButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (txtMemberIdAdmin.Text == "")
+            {
+                MessageBox.Show("사용자 ID값을 입력해주세요");
+                return;
+            }
+
+            int memberId;
+
+            if (!int.TryParse(txtMemberIdAdmin.Text, out memberId))
+            {
+                MessageBox.Show("사용자 ID값은 숫자여야 합니다");
+                return;
+            }
+
+            // DataManager의 GetMemeberById 메소드 호출하여 DB에서 멤버 정보 가져오기
+            var memberToDelete = dataManager.GetMemberById(memberId);
+
+            if (memberToDelete == null)
+            {
+                MessageBox.Show("해당 ID의 회원이 존재하지 않습니다");
+                return;
+            }
+
+            // 이름과 연락처가 일치하는지 확인
+            if (memberToDelete.Name != txtMemberNameAdmin.Text || memberToDelete.MobileNumber != txtMemberMobileAdmin.Text)
+            {
+                MessageBox.Show("입력한 이름 또는 연락처가 일치하지 않습니다");
+                return;
+            }
+
+            // DataManager의 DeleteMemeber 메소드 호출하여 DB에서 해당 멤버 삭제
+            dataManager.DeleteMember(memberId);
+
+            // DB에서 최신 멤버 리스트 불러오기
+            var members = dataManager.LoadMembers();
+
+            // UI 갱신 
+            memberStatusGrid.ItemsSource = members;
+            memberStatusAdminGrid.ItemsSource = members;
+
+            int totalMemeberCount = members.Count;
+            lblTotalMembers.Content = $"전체 회원 수 : {totalMemeberCount}명";
+        }
+
+        private void BookAddButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (txtBookIdAdmin.Text != "")
+            {
+                MessageBox.Show("도서번호를 비워주세요");
+                return;
+            }
+
+            if (
+                string.IsNullOrWhiteSpace(txtTitleAdmin.Text) ||
+                string.IsNullOrWhiteSpace(txtCategoryAdmin.Text) ||
+                string.IsNullOrWhiteSpace(txtAuthorAdmin.Text) ||
+                string.IsNullOrWhiteSpace(txtDescriptionAdmin.Text) ||
+                string.IsNullOrWhiteSpace(txtPublisherAdmin.Text) ||
+                string.IsNullOrWhiteSpace(txtPublicationDateAdmin.Text) ||
+                string.IsNullOrWhiteSpace(txtQuantityDateAdmin.Text)
+                )
+            {
+                MessageBox.Show("도서번호를 제외한 모든 필드를 채워주세요");
+                return;
+            }
+
+            var newBook = new Books
+            {
+                Title = txtTitleAdmin.Text,
+                Category = txtCategoryAdmin.Text,
+                Author = txtAuthorAdmin.Text,
+                Description = txtDescriptionAdmin.Text,
+                Publisher = txtPublisherAdmin.Text,
+                PublicationDate = txtPublicationDateAdmin.Text,
+                Quantity = txtQuantityDateAdmin.Text,
+                RegisteredDate = DateTime.Now
+            };
+
+            dataManager.AddNewBook(newBook);
+
+            // DB에서 최신 멤버 리스트 불러오기
+            var books = dataManager.LoadBooks();
+
+            // UI 갱신 
+            bookStatusGrid.ItemsSource = books;
+            bookStatusAdminGrid.ItemsSource = books;
+
+            int totalBookCount = books.Sum(book =>
+            {
+                int quantity;
+                if (int.TryParse(book.Quantity, out quantity))
+                    return quantity;
+                else
+                    return 0;
+            });
+            int totalBookTypes = books.Count;
+
+            lblTotalBooks.Content = $"전체 도서 수 : {totalBookTypes}종, 총 {totalBookCount}권";
+        }
+
+        private void BookUpdateButton_Click(object sender, RoutedEventArgs e)
+        {
+            int bookId;
+
+            if (!int.TryParse(txtBookIdAdmin.Text, out bookId))
+            {
+                MessageBox.Show("유효한 도서 번호를 입력하세요.");
+                return;
+            }
+
+            var existingBook = dataManager.GetBookById(bookId);
+
+            if (existingBook == null)
+            {
+                MessageBox.Show($"도서번호 {bookId}에 해당하는 도서가 없습니다.");
+                return;
+            }
+
+            existingBook.Title = txtTitleAdmin.Text;
+            existingBook.Category = txtCategoryAdmin.Text;
+            existingBook.Author = txtAuthorAdmin.Text;
+            existingBook.Description = txtDescriptionAdmin.Text;
+            existingBook.Publisher = txtPublisherAdmin.Text;
+
+            // PublicationDate는 문자열로 처리되므로 그대로 전달합니다.
+            existingBook.PublicationDate = txtPublicationDateAdmin.Text;
+
+            existingBook.Quantity = txtQuantityDateAdmin.Text;
+
+            dataManager.UpdateBook(existingBook);
+
+            // DB에서 최신 멤버 리스트 불러오기
+            var books = dataManager.LoadBooks();
+
+            // UI 갱신 
+            bookStatusGrid.ItemsSource = books;
+            bookStatusAdminGrid.ItemsSource = books;
+
+            int totalBookCount = books.Sum(book =>
+            {
+                int quantity;
+                if (int.TryParse(book.Quantity, out quantity))
+                    return quantity;
+                else
+                    return 0;
+            });
+            int totalTypesCount = books.Count;
+
+            lblTotalBooks.Content = $"전체 도서 수 : {totalTypesCount}종, 총 {totalBookCount}권";
+        }
+
+        private void BookDeleteButton_Click(object sender, RoutedEventArgs e)
+        {
+            int bookId;
+
+            if (!int.TryParse(txtBookIdAdmin.Text, out bookId))
+            {
+                MessageBox.Show("유효한 도서 번호를 입력하세요.");
+                return;
+            }
+
+            var existingBook = dataManager.GetBookById(bookId);
+
+            if (existingBook == null)
+            {
+                MessageBox.Show($"도서번호 {bookId}에 해당하는 도서가 없습니다.");
+                return;
+            }
+
+            dataManager.DeleteBook(bookId);
+
+            // DB에서 최신 멤버 리스트 불러오기
+            var books = dataManager.LoadBooks();
+
+            // UI 갱신 
+            bookStatusGrid.ItemsSource = books;
+            bookStatusAdminGrid.ItemsSource = books;
+
+            int totalQuantityCount = books.Sum(book =>
+            {
+                int quantity;
+                if (int.TryParse(book.Quantity, out quantity))
+                    return quantity;
+                else
+                    return 0;
+            });
+
+            int totalTypesCount = books.Count;
+
+            lblTotalBooks.Content = $"전체 도서 수 : {totalTypesCount}종, 총 {totalQuantityCount}권";
+        }
+
     }
 }

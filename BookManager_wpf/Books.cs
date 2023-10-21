@@ -15,7 +15,7 @@ namespace BookManager_wpf.Models
         public string Description { get; set; }  // 설명 
         public string Publisher { get; set; }  // 출판사 
         public string PublicationDate { get; set; }  // 출판일 (문자열)
-        public int Quantity { get; set; }  // 수량 
+        public string Quantity { get; set; }  // 수량 
         public DateTime RegisteredDate { get; set; }  // 등록일  
 
         // ToString 메서드 오버라이딩. 각 속성을 문자열로 변환하여 출력.

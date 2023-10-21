@@ -47,7 +47,7 @@ namespace BookManager_wpf
                             Description = reader.GetString(4),
                             Publisher = reader.GetString(5),
                             PublicationDate = reader.GetString(6),  // 문자열로 처리됨.
-                            Quantity = reader.GetInt32(7),
+                            Quantity = reader.GetString(7),
                             RegisteredDate = reader.GetDateTime(8)
                         };
                         books.Add(book);
@@ -87,5 +87,184 @@ namespace BookManager_wpf
                 return members;
             }
         }
+
+        public void AddNewMember(Members newMember)
+        {
+            using (var connection = new MySqlConnection(connectionString))
+            {
+                connection.Open();
+
+                string query = "INSERT INTO members(name, mobile_number, createdDate) VALUES(@name, @mobileNumber, @createdDate)";
+
+                MySqlCommand cmd = new MySqlCommand(query, connection);
+                cmd.Parameters.AddWithValue("@name", newMember.Name);
+                cmd.Parameters.AddWithValue("@mobileNumber", newMember.MobileNumber);
+                cmd.Parameters.AddWithValue("@createdDate", DateTime.Now);
+
+                cmd.ExecuteNonQuery();
+            }
+        }
+
+        public Members GetMemberById(int id)
+        {
+            using (var connection = new MySqlConnection(connectionString))
+            {
+                connection.Open();
+
+                string query = "SELECT * FROM members WHERE member_id = @id";
+
+                MySqlCommand cmd = new MySqlCommand(query, connection);
+                cmd.Parameters.AddWithValue("@id", id);
+
+                using (var reader = cmd.ExecuteReader())
+                {
+                    if (reader.Read())
+                    {
+                        return new Members
+                        {
+                            MemberId = reader.GetInt32(0),
+                            Name = reader.GetString(1),
+                            MobileNumber = reader.GetString(2),
+                            CreatedDate = reader.GetDateTime(3)
+                        };
+                    }
+                    else
+                    {
+                        return null;
+                    }
+                }
+            }
+        }
+
+
+        public void UpdateMember(Members updatedMember)
+        {
+            using (var connection = new MySqlConnection(connectionString))
+            {
+                connection.Open();
+
+                string query = "UPDATE members SET name = @name, mobile_number = @mobileNumber WHERE member_id = @id";
+
+                MySqlCommand cmd = new MySqlCommand(query, connection);
+                cmd.Parameters.AddWithValue("@name", updatedMember.Name);
+                cmd.Parameters.AddWithValue("@mobileNumber", updatedMember.MobileNumber);
+                cmd.Parameters.AddWithValue("@id", updatedMember.MemberId);
+
+                cmd.ExecuteNonQuery();
+            }
+        }
+
+        public void DeleteMember(int id)
+        {
+            using (var connection = new MySqlConnection(connectionString))
+            {
+                connection.Open();
+
+                string query = "DELETE FROM members WHERE member_id = @id";
+
+                MySqlCommand cmd = new MySqlCommand(query, connection);
+                cmd.Parameters.AddWithValue("@id", id);
+
+                cmd.ExecuteNonQuery();
+            }
+        }
+
+
+
+        public void AddNewBook(Books newBook)
+        {
+            using (var connection = new MySqlConnection(connectionString))
+            {
+                connection.Open();
+
+                string query = "INSERT INTO books(title, category, author, description, publisher, publication_date, quantity, registered_date) VALUES(@title, @category, @author, @description, @publisher, @publicationDate, @quantity, @registeredDate)";
+
+                MySqlCommand cmd = new MySqlCommand(query, connection);
+                cmd.Parameters.AddWithValue("@title", newBook.Title);
+                cmd.Parameters.AddWithValue("@category", newBook.Category);
+                cmd.Parameters.AddWithValue("@author", newBook.Author);
+                cmd.Parameters.AddWithValue("@description", newBook.Description);
+                cmd.Parameters.AddWithValue("@publisher", newBook.Publisher);
+                cmd.Parameters.AddWithValue("@publicationDate", newBook.PublicationDate);
+                cmd.Parameters.AddWithValue("@quantity", newBook.Quantity);
+                cmd.Parameters.AddWithValue("@registeredDate", DateTime.Now);
+
+                cmd.ExecuteNonQuery();
+            }
+        }
+
+        public Books GetBookById(int id)
+        {
+            using (var connection = new MySqlConnection(connectionString))
+            {
+                connection.Open();
+
+                string query = "SELECT * FROM books WHERE book_id = @bookId";
+
+                MySqlCommand cmd = new MySqlCommand(query, connection);
+                cmd.Parameters.AddWithValue("@bookId", id);
+
+                using (var reader = cmd.ExecuteReader())
+                {
+                    if (reader.Read())
+                    {
+                        return new Books
+                        {
+                            BookId = reader.GetInt32("book_id"),
+                            Title = reader.GetString("title"),
+                            Category = reader.GetString("category"),
+                            Author = reader.GetString("author"),
+                            Description = reader.GetString("description"),
+                            Publisher = reader.GetString("publisher"),
+                            PublicationDate = reader.GetString("publication_date"),
+                            Quantity = reader.GetString("quantity"),
+                            RegisteredDate = reader.GetDateTime("registered_date")
+                        };
+                    }
+                    else
+                    {
+                        return null;
+                    }
+                }
+            }
+        }
+        public void UpdateBook(Books updatedBook)
+        {
+            using (var connection = new MySqlConnection(connectionString))
+            {
+                connection.Open();
+
+                string query = "UPDATE books SET title = @title, category = @category, author = @author, description = @description, publisher = @publisher, publication_date = @publicationDate, quantity=@quantity WHERE book_id= @bookId";
+
+                MySqlCommand cmd = new MySqlCommand(query, connection);
+                cmd.Parameters.AddWithValue("@title", updatedBook.Title);
+                cmd.Parameters.AddWithValue("@category", updatedBook.Category);
+                cmd.Parameters.AddWithValue("@author", updatedBook.Author);
+                cmd.Parameters.AddWithValue("@description", updatedBook.Description);
+                cmd.Parameters.AddWithValue("@publisher", updatedBook.Publisher);
+                cmd.Parameters.AddWithValue("@publicationDate", updatedBook.PublicationDate);
+                cmd.Parameters.AddWithValue("@quantity", updatedBook.Quantity);
+                cmd.Parameters.AddWithValue("@bookId", updatedBook.BookId);
+
+                cmd.ExecuteNonQuery();
+            }
+        }
+
+        public void DeleteBook(int bookId)
+        {
+            using (var connection = new MySqlConnection(connectionString))
+            {
+                connection.Open();
+
+                string query = "DELETE FROM books WHERE book_id = @bookId";
+
+                MySqlCommand cmd = new MySqlCommand(query, connection);
+                cmd.Parameters.AddWithValue("@bookId", bookId);
+
+                cmd.ExecuteNonQuery();
+            }
+        }
+
+
     }
 }

@@ -78,10 +78,11 @@
                                     <DataGridTextColumn Header="도서 이름" Binding="{Binding Title}" Width="140"/>
                                     <DataGridTextColumn Header="분류" Binding="{Binding Category}" Width="60"/>
                                     <DataGridTextColumn Header="저자" Binding="{Binding Author}"  Width="60"/>
-                                    <DataGridTextColumn Header="설명" Binding="{Binding Description}" Width="520"/>
+                                    <DataGridTextColumn Header="설명" Binding="{Binding Description}" Width="430"/>
                                     <DataGridTextColumn Header="출판사" Binding="{Binding Publisher}" Width="60"/>
                                     <DataGridTextColumn Header="출판일" Binding="{Binding PublicationDate}" Width="80"/>
-                                    <DataGridTextColumn Header="수량" Binding="{Binding Quantity}" Width="40"/>
+                                    <DataGridTextColumn Header="대여 가능" Binding="{Binding QuantityAvailable}" Width="70"/>
+                                    <DataGridTextColumn Header="총 수량" Binding="{Binding Quantity}" Width="60"/>
                                     <DataGridTextColumn Header="등록일" Binding="{Binding RegisteredDate}" Width="140"/>
                                 </DataGrid.Columns>
                             </DataGrid>
@@ -95,6 +96,7 @@
                                     <DataGridTextColumn Header="사용자 ID" Binding="{Binding MemberId}" Width="140"/>
                                     <DataGridTextColumn Header="이름" Binding="{Binding Name}" Width="140"/>
                                     <DataGridTextColumn Header="번호" Binding="{Binding MobileNumber}" Width="140"/>
+                                    <DataGridTextColumn Header="등록일" Binding="{Binding CreatedDate}"  Width="180"/>
                                     <DataGridTextColumn Header="등록일" Binding="{Binding CreatedDate}"  Width="180"/>
                                 </DataGrid.Columns>
                             </DataGrid>

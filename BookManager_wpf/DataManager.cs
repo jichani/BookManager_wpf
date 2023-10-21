@@ -47,6 +47,7 @@ namespace BookManager_wpf
                             Description = reader.GetString(4),
                             Publisher = reader.GetString(5),
                             PublicationDate = reader.GetString(6),  // 문자열로 처리됨.
+                            QuantityAvailable = GetAvailableCopies(reader.GetInt32(0)),
                             Quantity = reader.GetString(7),
                             RegisteredDate = reader.GetDateTime(8)
                         };
@@ -376,6 +377,28 @@ namespace BookManager_wpf
                 return books;
             }
         }
+
+        public int GetAvailableCopies(int bookId)
+        {
+            using (var connection = new MySqlConnection(connectionString))
+            {
+                connection.Open();
+
+                string query = "SELECT COUNT(*) FROM checkouts WHERE book_id = @bookId";
+
+                MySqlCommand cmd = new MySqlCommand(query, connection);
+                cmd.Parameters.AddWithValue("@bookId", bookId);
+
+                // ExecuteScalar()은 쿼리의 결과로 반환된 첫 번째 행의 첫 번째 열을 반환합니다.
+                // 이 경우, COUNT(*) 결과가 됩니다.
+                int checkedOutCopiesCount = Convert.ToInt32(cmd.ExecuteScalar());
+
+                Books book = GetBookById(bookId);
+
+                return Convert.ToInt32(book.Quantity) - checkedOutCopiesCount;
+            }
+        }
+
 
 
 

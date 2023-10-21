@@ -52,7 +52,11 @@ namespace BookManager_wpf
                             });
                             int totalBookTypes = books.Count;
 
+                            int totalAvailableBookCount = books.Sum(book => book.QuantityAvailable);
+
                             lblTotalBooks.Content = $"전체 도서 수 : {totalBookTypes}종, 총 {totalBookCount}권";
+                            lblAvailableBooks.Content = $"대출 가능한 도서 수 : {totalAvailableBookCount}권";
+                            lblBorrowedBooks.Content = $"대출 중인 도서 수 : {totalBookCount - totalAvailableBookCount}권";
 
                             bookStatusGrid.ItemsSource = books;
                             bookStatusAdminGrid.ItemsSource = books;
@@ -268,6 +272,7 @@ namespace BookManager_wpf
             lblTotalMembers.Content = $"전체 회원 수 : {totalMemeberCount}명";
         }
 
+
         private void BookAddButton_Click(object sender, RoutedEventArgs e)
         {
             if (txtBookIdAdmin.Text != "")
@@ -323,7 +328,6 @@ namespace BookManager_wpf
 
             lblTotalBooks.Content = $"전체 도서 수 : {totalBookTypes}종, 총 {totalBookCount}권";
         }
-
         private void BookUpdateButton_Click(object sender, RoutedEventArgs e)
         {
             int bookId;
@@ -382,7 +386,6 @@ namespace BookManager_wpf
 
             lblTotalBooks.Content = $"전체 도서 수 : {totalTypesCount}종, 총 {totalBookCount}권";
         }
-
         private void BookDeleteButton_Click(object sender, RoutedEventArgs e)
         {
             int bookId;
@@ -432,6 +435,7 @@ namespace BookManager_wpf
             lblTotalBooks.Content = $"전체 도서 수 : {totalTypesCount}종, 총 {totalQuantityCount}권";
         }
 
+
         private void BookSearchButton_Click(object sender, RoutedEventArgs e)
         {
             string? selectedField = (BookSearchComboBox.SelectedItem as ComboBoxItem)?.Content.ToString();
@@ -465,7 +469,6 @@ namespace BookManager_wpf
 
             bookStatusAdminGrid.ItemsSource = filteredBooks;
         }
-
         private void BookSearchTextBox_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.Key == Key.Enter)

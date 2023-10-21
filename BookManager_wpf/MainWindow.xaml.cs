@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Text;
@@ -31,6 +32,18 @@ namespace BookManager_wpf
 
             // DataManager 인스턴스 생성
             dataManager = new DataManager();
+
+            // 대여 로그를 텍스트 파일에서 불러오기
+            if (File.Exists("checkoutLogs.txt"))
+            {
+                string[] logLines = File.ReadAllLines("checkoutLogs.txt");
+
+                // 라인들을 거꾸로 순회하여 최신 로그가 위로 오게 함
+                for (int i = logLines.Length - 1; i >= 0; i--)
+                {
+                    checkoutLogs.Items.Add(logLines[i]);
+                }
+            }
 
             Task.Run(() =>
             {
@@ -489,6 +502,8 @@ namespace BookManager_wpf
         {
             int bookId;
             int memberId;
+            string bookTitle = txtBookTitle.Text.Trim();
+            string memberName = txtMemberName.Text.Trim();
 
             if (!int.TryParse(txtBookId.Text, out bookId) || !int.TryParse(txtMemberId.Text, out memberId))
             {
@@ -498,9 +513,19 @@ namespace BookManager_wpf
 
             var selectedMember = dataManager.GetMemberById(memberId);
 
-            if (selectedMember == null)
+            // 멤버 이름 확인
+            if (selectedMember == null || selectedMember.Name != memberName)
             {
-                MessageBox.Show("해당 ID의 회원이 존재하지 않습니다.");
+                MessageBox.Show("해당 ID의 회원이 존재하지 않거나 이름이 일치하지 않습니다.");
+                return;
+            }
+
+            var selectedBook = dataManager.GetBookById(bookId);
+
+            // 도서 제목 확인
+            if (selectedBook == null || selectedBook.Title != bookTitle)
+            {
+                MessageBox.Show("해당 ID의 도서가 존재하지 않거나 제목이 일치하지 않습니다.");
                 return;
             }
 
@@ -516,12 +541,23 @@ namespace BookManager_wpf
             if (success)
             {
                 MessageBox.Show("도서가 성공적으로 대여되었습니다.");
+
+                string logMessage = $"[{DateTime.Now}] 회원 {memberName}이(가) '{bookTitle}' 도서를 대여하였습니다.";
+                checkoutLogs.Items.Insert(0, logMessage);
+
+                // 로그 메시지를 텍스트 파일에 추가
+                using (StreamWriter sw = File.AppendText("checkoutLogs.txt"))
+                {
+                    sw.WriteLine(logMessage);
+                }
+
                 // 필요한 경우 UI 업데이트 등 추가 작업 수행
                 ClearRentalFields();
                 UpdateLabelsAndGrid(bookId);
                 UpdateMembersGrid();
             }
         }
+
         // 새로운 함수: 회원 데이터 그리드 업데이트 
         private void UpdateMembersGrid()
         {
@@ -534,12 +570,33 @@ namespace BookManager_wpf
         {
             int bookId;
             int memberId;
+            string bookTitle = txtBookTitle.Text.Trim();
+            string memberName = txtMemberName.Text.Trim();
 
             if (!int.TryParse(txtBookId.Text, out bookId) || !int.TryParse(txtMemberId.Text, out memberId))
             {
                 MessageBox.Show("유효한 도서 번호와 사용자 ID를 입력하세요.");
                 return;
             }
+
+            var selectedMember = dataManager.GetMemberById(memberId);
+
+            // 멤버 이름 확인
+            if (selectedMember == null || selectedMember.Name != memberName)
+            {
+                MessageBox.Show("해당 ID의 회원이 존재하지 않거나 이름이 일치하지 않습니다.");
+                return;
+            }
+
+            var selectedBook = dataManager.GetBookById(bookId);
+
+            // 도서 제목 확인
+            if (selectedBook == null || selectedBook.Title != bookTitle)
+            {
+                MessageBox.Show("해당 ID의 도서가 존재하지 않거나 제목이 일치하지 않습니다.");
+                return;
+            }
+
             // 해당 도서가 실제로 대여되었는지 확인합니다.
             if (!dataManager.IsBookCheckedOutByMember(bookId, memberId))
             {
@@ -553,7 +610,16 @@ namespace BookManager_wpf
             if (success)
             {
                 MessageBox.Show("도서가 성공적으로 반납되었습니다.");
-                // 필요한 경우 UI 업데이트 등 추가 작업 수행
+
+                string logMessage = $"[{DateTime.Now}] 회원 {memberName}이(가) '{bookTitle}' 도서를 반납하였습니다.";
+                checkoutLogs.Items.Insert(0, logMessage);
+
+                // 로그 메시지를 텍스트 파일에 추가
+                using (StreamWriter sw = File.AppendText("checkoutLogs.txt"))
+                {
+                    sw.WriteLine(logMessage);
+                }
+
                 ClearRentalFields();
                 UpdateLabelsAndGrid(bookId);
                 UpdateMembersGrid();

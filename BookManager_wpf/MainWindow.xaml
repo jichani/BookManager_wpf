@@ -65,7 +65,7 @@
                         </GroupBox>
 
                         <GroupBox Header="대여 로그" Grid.Column="2" Margin="10,10,10,10">
-                            <ListBox d:ItemsSource="{d:SampleData ItemCount=5}"/>
+                            <ListBox x:Name="checkoutLogs" d:ItemsSource="{d:SampleData ItemCount=5}"/>
                         </GroupBox>
 
                     </Grid>

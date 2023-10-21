@@ -665,5 +665,16 @@ namespace BookManager_wpf
             }
         }
 
+        private void LogButton_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                System.Diagnostics.Process.Start("notepad.exe", "checkoutLogs.txt");
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"파일을 열지 못했습니다: {ex.Message}");
+            }
+        }
     }
 }

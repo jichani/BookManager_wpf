@@ -55,6 +55,7 @@
                                 <StackPanel HorizontalAlignment="Left" Orientation= "Horizontal" Margin="5">
                                     <Label Content="사용자 ID" Margin="0,0,10,0"/>
                                     <TextBox VerticalAlignment="Center" Name="txtMemberId" Width="170" Margin="0,0,10,0" PreviewTextInput="NumberValidationTextBox"/>
+                                    <Button Content="대여 로그 보기" Width="80" Click="LogButton_Click" FontSize="10"/>
                                 </StackPanel >
 
                                 <StackPanel HorizontalAlignment="Left" Orientation= "Horizontal" Margin="5">

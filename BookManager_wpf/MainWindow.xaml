@@ -93,10 +93,10 @@
                         <GroupBox Header="사용자현황">
                             <DataGrid Name="memberStatusGrid" AutoGenerateColumns="False" IsReadOnly="True" SelectionChanged="MemberStatusGrid_SelectionChanged">
                                 <DataGrid.Columns>
-                                    <DataGridTextColumn Header="사용자 ID" Binding="{Binding MemberId}" Width="140"/>
-                                    <DataGridTextColumn Header="이름" Binding="{Binding Name}" Width="140"/>
-                                    <DataGridTextColumn Header="번호" Binding="{Binding MobileNumber}" Width="140"/>
-                                    <DataGridTextColumn Header="등록일" Binding="{Binding CreatedDate}"  Width="180"/>
+                                    <DataGridTextColumn Header="사용자 ID" Binding="{Binding MemberId}"/>
+                                    <DataGridTextColumn Header="이름" Binding="{Binding Name}" Width="80"/>
+                                    <DataGridTextColumn Header="번호" Binding="{Binding MobileNumber}" Width="90"/>
+                                    <DataGridTextColumn Header="대여가능권수" Binding="{Binding AvailableBookCount}" Width="90"/>
                                 </DataGrid.Columns>
                             </DataGrid>
                         </GroupBox>

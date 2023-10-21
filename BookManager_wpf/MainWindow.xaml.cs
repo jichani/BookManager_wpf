@@ -496,6 +496,20 @@ namespace BookManager_wpf
                 return;
             }
 
+            var selectedMember = dataManager.GetMemberById(memberId);
+
+            if (selectedMember == null)
+            {
+                MessageBox.Show("해당 ID의 회원이 존재하지 않습니다.");
+                return;
+            }
+
+            if (selectedMember.AvailableBookCount <= 0)
+            {
+                MessageBox.Show("더 이상 대출이 불가능합니다.");
+                return;
+            }
+
             // DataManager의 RentBook 메소드 호출하여 책 대여 처리
             bool success = dataManager.RentBook(bookId, memberId);
 
@@ -505,7 +519,15 @@ namespace BookManager_wpf
                 // 필요한 경우 UI 업데이트 등 추가 작업 수행
                 ClearRentalFields();
                 UpdateLabelsAndGrid(bookId);
+                UpdateMembersGrid();
             }
+        }
+        // 새로운 함수: 회원 데이터 그리드 업데이트 
+        private void UpdateMembersGrid()
+        {
+            var members = dataManager.LoadMembers();
+            memberStatusGrid.ItemsSource = null;
+            memberStatusGrid.ItemsSource = members;
         }
 
         private void ReturnButton_Click(object sender, RoutedEventArgs e)
@@ -534,6 +556,7 @@ namespace BookManager_wpf
                 // 필요한 경우 UI 업데이트 등 추가 작업 수행
                 ClearRentalFields();
                 UpdateLabelsAndGrid(bookId);
+                UpdateMembersGrid();
             }
         }
         private void ClearRentalFields()

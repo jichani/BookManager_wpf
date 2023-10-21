@@ -79,7 +79,8 @@ namespace BookManager_wpf
                             MemberId = reader.GetInt32(0),
                             Name = reader.GetString(1),
                             MobileNumber = reader.GetString(2),
-                            CreatedDate = reader.GetDateTime(3)
+                            CreatedDate = reader.GetDateTime(3),
+                            AvailableBookCount = GetAvailableBookCountForMember(reader.GetInt32(0))
                         };
                         members.Add(member);
                     }
@@ -126,7 +127,8 @@ namespace BookManager_wpf
                             MemberId = reader.GetInt32(0),
                             Name = reader.GetString(1),
                             MobileNumber = reader.GetString(2),
-                            CreatedDate = reader.GetDateTime(3)
+                            CreatedDate = reader.GetDateTime(3),
+                            AvailableBookCount = GetAvailableBookCountForMember(id)
                         };
                     }
                     else
@@ -500,6 +502,23 @@ namespace BookManager_wpf
                 var result = Convert.ToInt32(cmd.ExecuteScalar());
 
                 return result;
+            }
+        }
+
+        public int GetAvailableBookCountForMember(int memberId)
+        {
+            using (var connection = new MySqlConnection(connectionString))
+            {
+                connection.Open();
+
+                string query = "SELECT COUNT(*) FROM checkouts WHERE member_id = @memberId AND return_date IS NULL";
+
+                MySqlCommand cmd = new MySqlCommand(query, connection);
+                cmd.Parameters.AddWithValue("@memberId", memberId);
+
+                var checkedOutBooksCount = Convert.ToInt32(cmd.ExecuteScalar());
+
+                return Math.Max(0, 3 - checkedOutBooksCount); // 최대 3권에서 현재 대출 중인 도서수를 뺀다.
             }
         }
 

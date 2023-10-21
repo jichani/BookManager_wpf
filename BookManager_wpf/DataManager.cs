@@ -384,7 +384,7 @@ namespace BookManager_wpf
             {
                 connection.Open();
 
-                string query = "SELECT COUNT(*) FROM checkouts WHERE book_id = @bookId";
+                string query = "SELECT COUNT(*) FROM checkouts WHERE book_id = @bookId AND return_date IS NULL";
 
                 MySqlCommand cmd = new MySqlCommand(query, connection);
                 cmd.Parameters.AddWithValue("@bookId", bookId);
@@ -399,8 +399,92 @@ namespace BookManager_wpf
             }
         }
 
+        public bool RentBook(int bookId, int memberId)
+        {
+            using (var connection = new MySqlConnection(connectionString))
+            {
+                connection.Open();
 
+                string query = "INSERT INTO checkouts(book_id, member_id, checkout_date) VALUES(@bookId, @memberId, @checkoutDate)";
 
+                MySqlCommand cmd = new MySqlCommand(query, connection);
+                cmd.Parameters.AddWithValue("@bookId", bookId);
+                cmd.Parameters.AddWithValue("@memberId", memberId);
+                cmd.Parameters.AddWithValue("@checkoutDate", DateTime.Now);
+
+                var result = cmd.ExecuteNonQuery();
+
+                return result > 0;
+            }
+        }
+        public bool IsBookCheckedOutByMember(int bookId, int memberId)
+        {
+            using (var connection = new MySqlConnection(connectionString))
+            {
+                connection.Open();
+
+                string query = "SELECT COUNT(*) FROM checkouts WHERE book_id = @bookId AND member_id= @memberId AND return_date IS NULL";
+
+                MySqlCommand cmd = new MySqlCommand(query, connection);
+                cmd.Parameters.AddWithValue("@bookId", bookId);
+                cmd.Parameters.AddWithValue("@memberId", memberId);
+
+                var result = Convert.ToInt32(cmd.ExecuteScalar());
+
+                return result > 0;
+            }
+        }
+
+        public bool ReturnBook(int bookId, int memberId)
+        {
+            using (var connection = new MySqlConnection(connectionString))
+            {
+                connection.Open();
+
+                string query = "UPDATE checkouts SET return_date = @returnDate WHERE book_id = @bookId AND member_id= @memberId AND return_date IS NULL";
+
+                MySqlCommand cmd = new MySqlCommand(query, connection);
+                cmd.Parameters.AddWithValue("@returnDate", DateTime.Now);
+                cmd.Parameters.AddWithValue("@bookId", bookId);
+                cmd.Parameters.AddWithValue("@memberId", memberId);
+
+                var result = cmd.ExecuteNonQuery();
+
+                return result > 0;
+            }
+        }
+
+        public List<Checkouts> LoadCheckouts()
+        {
+            var checkouts = new List<Checkouts>();
+
+            using (var connection = new MySqlConnection(connectionString))
+            {
+                connection.Open();
+
+                string query = "SELECT * FROM checkouts";
+
+                MySqlCommand cmd = new MySqlCommand(query, connection);
+
+                using (var reader = cmd.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        var checkout = new Checkouts
+                        {
+                            CheckoutId = reader.GetInt32(0),
+                            BookId = reader.GetInt32(1),
+                            MemberId = reader.GetInt32(2),
+                            CheckoutDate = reader.GetDateTime(3),
+                            ReturnDate = !reader.IsDBNull(4) ? reader.GetDateTime(4) : (DateTime?)null // null을 처리하기 위해 사용합니다.
+                        };
+                        checkouts.Add(checkout);
+                    }
+                }
+            }
+
+            return checkouts;
+        }
 
     }
 }

@@ -43,13 +43,13 @@
                                 <StackPanel HorizontalAlignment="Left" Orientation="Horizontal" Margin="5">
                                     <Label Content="도서번호 " Margin="0,0,10,0"/>
                                     <TextBox VerticalAlignment="Center" Name="txtBookId" Width="170" Margin="0,0,10,0" PreviewTextInput="NumberValidationTextBox"/>
-                                    <Button Content="대여" Width="80"/>
+                                    <Button Content="대여" Width="80" Click="RentButton_Click"/>
                                 </StackPanel>
 
                                 <StackPanel HorizontalAlignment="Left" Orientation="Horizontal" Margin="5">
                                     <Label Content="도서 이름" Margin="0,0,10,0"/>
                                     <TextBox VerticalAlignment="Center" Name="txtBookTitle" Width="170" Margin="0,0,10,0"/>
-                                    <Button Content="반납" Width="80"/>
+                                    <Button Content="반납" Width="80" Click="ReturnButton_Click"/>
                                 </StackPanel>
 
                                 <StackPanel HorizontalAlignment="Left" Orientation= "Horizontal" Margin="5">
@@ -96,7 +96,6 @@
                                     <DataGridTextColumn Header="사용자 ID" Binding="{Binding MemberId}" Width="140"/>
                                     <DataGridTextColumn Header="이름" Binding="{Binding Name}" Width="140"/>
                                     <DataGridTextColumn Header="번호" Binding="{Binding MobileNumber}" Width="140"/>
-                                    <DataGridTextColumn Header="등록일" Binding="{Binding CreatedDate}"  Width="180"/>
                                     <DataGridTextColumn Header="등록일" Binding="{Binding CreatedDate}"  Width="180"/>
                                 </DataGrid.Columns>
                             </DataGrid>

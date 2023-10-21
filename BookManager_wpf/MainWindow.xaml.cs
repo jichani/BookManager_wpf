@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
@@ -35,6 +36,7 @@ namespace BookManager_wpf
             {
                 var books = dataManager.LoadBooks();  // 데이터베이스에서 책 정보 불러오기
                 var members = dataManager.LoadMembers();  // 데이터베이스에서 회원 정보 불러오기
+                var checkouts = dataManager.LoadCheckouts();  // 데이터베이스에서 체크아웃 정보 불러오기
 
                 Application.Current.Dispatcher.Invoke(new Action(() =>
                 {
@@ -52,11 +54,13 @@ namespace BookManager_wpf
                             });
                             int totalBookTypes = books.Count;
 
-                            int totalAvailableBookCount = books.Sum(book => book.QuantityAvailable);
+                            int totalBorrowedBookCount = checkouts.Count(checkout => checkout.ReturnDate == null);
+
+                            int totalAvailableBookCount = totalBookCount - totalBorrowedBookCount;
 
                             lblTotalBooks.Content = $"전체 도서 수 : {totalBookTypes}종, 총 {totalBookCount}권";
                             lblAvailableBooks.Content = $"대출 가능한 도서 수 : {totalAvailableBookCount}권";
-                            lblBorrowedBooks.Content = $"대출 중인 도서 수 : {totalBookCount - totalAvailableBookCount}권";
+                            lblBorrowedBooks.Content = $"대출 중인 도서 수 : {totalBorrowedBookCount}권";
 
                             bookStatusGrid.ItemsSource = books;
                             bookStatusAdminGrid.ItemsSource = books;
@@ -476,5 +480,94 @@ namespace BookManager_wpf
                 BookSearchButton_Click(sender, e);
             }
         }
+
+        private void RentButton_Click(object sender, RoutedEventArgs e)
+        {
+            int bookId;
+            int memberId;
+
+            if (!int.TryParse(txtBookId.Text, out bookId) || !int.TryParse(txtMemberId.Text, out memberId))
+            {
+                MessageBox.Show("유효한 도서 번호와 사용자 ID를 입력하세요.");
+                return;
+            }
+
+            // DataManager의 RentBook 메소드 호출하여 책 대여 처리
+            bool success = dataManager.RentBook(bookId, memberId);
+
+            if (success)
+            {
+                MessageBox.Show("도서가 성공적으로 대여되었습니다.");
+                // 필요한 경우 UI 업데이트 등 추가 작업 수행
+                ClearRentalFields();
+                UpdateLabelsAndGrid(bookId);
+            }
+        }
+
+        private void ReturnButton_Click(object sender, RoutedEventArgs e)
+        {
+            int bookId;
+            int memberId;
+
+            if (!int.TryParse(txtBookId.Text, out bookId) || !int.TryParse(txtMemberId.Text, out memberId))
+            {
+                MessageBox.Show("유효한 도서 번호와 사용자 ID를 입력하세요.");
+                return;
+            }
+            // 해당 도서가 실제로 대여되었는지 확인합니다.
+            if (!dataManager.IsBookCheckedOutByMember(bookId, memberId))
+            {
+                MessageBox.Show("대여 정보가 없습니다.");
+                return;
+            }
+
+            // DataManager의 ReturnBook 메소드 호출하여 책 반납 처리
+            bool success = dataManager.ReturnBook(bookId, memberId);
+
+            if (success)
+            {
+                MessageBox.Show("도서가 성공적으로 반납되었습니다.");
+                // 필요한 경우 UI 업데이트 등 추가 작업 수행
+                ClearRentalFields();
+                UpdateLabelsAndGrid(bookId);
+            }
+        }
+        private void ClearRentalFields()
+        {
+            txtBookId.Clear();
+            txtMemberId.Clear();
+            txtBookTitle.Clear();
+            txtMemberName.Clear();
+        }
+
+        private void UpdateLabelsAndGrid(int bookId)
+        {
+            // DataManager의 GetBookById 메소드 호출하여 DB에서 책 정보 가져오기
+            var selectedBook = dataManager.GetBookById(bookId);
+
+            if (selectedBook != null)
+            {
+                // 데이터 그리드 업데이트
+                var books = dataManager.LoadBooks();  // LoadBooks()는 모든 도서 정보를 가져오는 메소드입니다.
+                bookStatusGrid.ItemsSource = null;
+                bookStatusGrid.ItemsSource = books;
+
+                // 라벨 업데이트
+                int totalAvailableCopies = 0;
+                int totalCopies = 0;
+
+                foreach (var book in books)
+                {
+                    totalAvailableCopies += dataManager.GetAvailableCopies(book.BookId);
+                    totalCopies += Convert.ToInt32(book.Quantity);
+                }
+
+                lblAvailableBooks.Content = $"대출 가능한 도서 수 : {totalAvailableCopies}권";
+
+                // 전체 복사본 수에서 사용 가능한 복사본 수를 뺌으로써 대출 중인 복사본수 계산
+                lblBorrowedBooks.Content = $"대출 중인 도서 수 : {totalCopies - totalAvailableCopies}권";
+            }
+        }
+
     }
 }

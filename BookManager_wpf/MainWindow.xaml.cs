@@ -353,6 +353,7 @@ namespace BookManager_wpf
             int totalBookTypes = books.Count;
 
             lblTotalBooks.Content = $"전체 도서 수 : {totalBookTypes}종, 총 {totalBookCount}권";
+            UpdateAllBooks();
         }
         private void BookUpdateButton_Click(object sender, RoutedEventArgs e)
         {
@@ -411,6 +412,7 @@ namespace BookManager_wpf
             int totalTypesCount = books.Count;
 
             lblTotalBooks.Content = $"전체 도서 수 : {totalTypesCount}종, 총 {totalBookCount}권";
+            UpdateAllBooks();
         }
         private void BookDeleteButton_Click(object sender, RoutedEventArgs e)
         {
@@ -459,6 +461,7 @@ namespace BookManager_wpf
             int totalTypesCount = books.Count;
 
             lblTotalBooks.Content = $"전체 도서 수 : {totalTypesCount}종, 총 {totalQuantityCount}권";
+            UpdateAllBooks();
         }
 
 
@@ -508,6 +511,32 @@ namespace BookManager_wpf
             {
                 CheckoutSearchButton_Click(sender, e);
             }
+        }
+
+        private void UpdateAllBooks()
+        {
+            // 데이터 그리드 업데이트
+            var books = dataManager.LoadBooks();  // LoadBooks()는 모든 도서 정보를 가져오는 메소드입니다.
+            bookStatusGrid.ItemsSource = null;
+            bookStatusGrid.ItemsSource = books;
+
+            // 라벨 업데이트
+            int totalAvailableCopies = 0;
+            int totalCopies = 0;
+
+            foreach (var book in books)
+            {
+                totalAvailableCopies += dataManager.GetAvailableCopies(book.BookId);
+                totalCopies += Convert.ToInt32(book.Quantity);
+            }
+
+            lblAvailableBooks.Content = $"대출 가능한 도서 수 : {totalAvailableCopies}권";
+
+            // 전체 복사본 수에서 사용 가능한 복사본 수를 뺌으로써 대출 중인 복사본수 계산
+            lblBorrowedBooks.Content = $"대출 중인 도서 수 : {totalCopies - totalAvailableCopies}권";
+
+            int overdueBooksCount = dataManager.GetOverdueBookCount();
+            lblOverdueBooks.Content = $"연체 중인 도서 수 : {overdueBooksCount}권";
         }
 
 
@@ -733,7 +762,7 @@ namespace BookManager_wpf
                 lblOverdueBooks.Content = $"연체 중인 도서 수 : {overdueBooksCount}권";
             }
         }
-
+        
         private void LogButton_Click(object sender, RoutedEventArgs e)
         {
             try

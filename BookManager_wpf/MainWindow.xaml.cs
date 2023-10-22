@@ -593,22 +593,6 @@ namespace BookManager_wpf
 
             UpdateBooksGrid();
         }
-
-        private void UpdateBooksGrid()
-        {
-            var books = dataManager.LoadBooks();
-            bookStatusGrid.ItemsSource = null;
-            bookStatusGrid.ItemsSource = books;
-        }
-
-        // 새로운 함수: 회원 데이터 그리드 업데이트 
-        private void UpdateMembersGrid()
-        {
-            var members = dataManager.LoadMembers();
-            memberStatusGrid.ItemsSource = null;
-            memberStatusGrid.ItemsSource = members;
-        }
-
         private void ReturnButton_Click(object sender, RoutedEventArgs e)
         {
             int bookId;
@@ -696,6 +680,20 @@ namespace BookManager_wpf
                 UpdateMembersGrid();
             }
         }
+
+        private void UpdateBooksGrid()
+        {
+            var books = dataManager.LoadBooks();
+            bookStatusGrid.ItemsSource = null;
+            bookStatusGrid.ItemsSource = books;
+        }
+        private void UpdateMembersGrid()
+        {
+            var members = dataManager.LoadMembers();
+            memberStatusGrid.ItemsSource = null;
+            memberStatusGrid.ItemsSource = members;
+        }
+
         private void ClearRentalFields()
         {
             txtBookId.Clear();

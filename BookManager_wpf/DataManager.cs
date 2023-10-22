@@ -668,9 +668,5 @@ namespace BookManager_wpf
                 return checkouts;
             }
         }
-
-
-
-
     }
 }

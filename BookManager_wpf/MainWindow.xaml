@@ -279,13 +279,13 @@
 
                     <GroupBox Width="420" Grid.Row="0" Header="대여 검색" Margin="5,10">
                         <StackPanel HorizontalAlignment="Center" Orientation="Horizontal" Margin="10, 10">
-                            <ComboBox Height="25" VerticalAlignment="Center">
+                            <ComboBox x:Name="checkoutSearchByComboBox" Height="20" VerticalAlignment="Center">
                                 <ComboBoxItem IsSelected="True">이름</ComboBoxItem>
                                 <ComboBoxItem>연락처</ComboBoxItem>
                             </ComboBox>
-                            <TextBox Width="200" Height="25" Margin="10, 0" VerticalAlignment ="Center"/>
-                            <Button Content ="검색" Width ="62" Height ="25" Margin ="0"
-                        VerticalAlignment = "Center"/>
+                            <TextBox KeyDown="CheckoutSearchTextBox_KeyDown" x:Name="checkoutSearchTextBox" Width="200" Height="20" Margin="10, 0" VerticalAlignment ="Center"/>
+                            <Button Content ="검색" Width ="62" Height ="20" Margin ="0"
+                        VerticalAlignment = "Center" Click = "CheckoutSearchButton_Click"/>
                         </StackPanel>
                     </GroupBox>
 

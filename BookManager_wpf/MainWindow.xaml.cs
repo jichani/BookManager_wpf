@@ -502,6 +502,14 @@ namespace BookManager_wpf
                 BookSearchButton_Click(sender, e);
             }
         }
+        private void CheckoutSearchTextBox_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Enter)
+            {
+                CheckoutSearchButton_Click(sender, e);
+            }
+        }
+
 
         private void RentButton_Click(object sender, RoutedEventArgs e)
         {
@@ -737,6 +745,31 @@ namespace BookManager_wpf
             catch (Exception ex)
             {
                 MessageBox.Show($"파일을 열지 못했습니다: {ex.Message}");
+            }
+        }
+
+        private void CheckoutSearchButton_Click(object sender, RoutedEventArgs e)
+        {
+            var selectedItem = checkoutSearchByComboBox.SelectedItem as ComboBoxItem;
+            string searchText = checkoutSearchTextBox.Text;
+
+            if (selectedItem.Content.ToString() == "이름")
+            {
+                // 이름으로 검색
+                var membersByName = dataManager.GetCheckoutsByName(searchText);
+
+                // 결과를 DataGrid에 표시
+                checkoutAllGrid.ItemsSource = null;
+                checkoutAllGrid.ItemsSource = membersByName;
+            }
+            else if (selectedItem.Content.ToString() == "연락처")
+            {
+                // 연락처로 검색
+                var membersByContact = dataManager.GetCheckoutsByContact(searchText);
+
+                // 결과를 DataGrid에 표시
+                checkoutAllGrid.ItemsSource = null;
+                checkoutAllGrid.ItemsSource = membersByContact;
             }
         }
     }

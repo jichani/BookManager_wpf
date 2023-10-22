@@ -596,6 +596,80 @@ namespace BookManager_wpf
                 }
             }
         }
+        public List<Checkouts> GetCheckoutsByName(string name)
+        {
+            var checkouts = new List<Checkouts>();
+
+            using (var connection = new MySqlConnection(connectionString))
+            {
+                connection.Open();
+
+                string query = "SELECT * FROM checkouts WHERE name LIKE @name";
+
+                MySqlCommand cmd = new MySqlCommand(query, connection);
+                cmd.Parameters.AddWithValue("@name", $"%{name}%");
+
+                using (var reader = cmd.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        var checkout = new Checkouts
+                        {
+                            CheckoutId = reader.GetInt32(0),
+                            MemberId = reader.GetInt32(2),
+                            BookId = reader.GetInt32(1),
+                            CheckoutDate = reader.GetDateTime(3),
+                            ReturnDate = !reader.IsDBNull(4) ? reader.GetDateTime(4) : (DateTime?)null,
+                            Name = reader.GetString(5),
+                            Title = reader.GetString(6)
+                        };
+                        checkouts.Add(checkout);
+                    }
+                }
+
+                return checkouts;
+            }
+        }
+
+        public List<Checkouts> GetCheckoutsByContact(string contact)
+        {
+            var checkouts = new List<Checkouts>();
+
+            using (var connection = new MySqlConnection(connectionString))
+            {
+                connection.Open();
+
+                string query = @"SELECT checkouts.* 
+                         FROM checkouts 
+                         JOIN members ON checkouts.member_id = members.member_id 
+                         WHERE members.mobile_number LIKE @contact";
+
+                MySqlCommand cmd = new MySqlCommand(query, connection);
+                cmd.Parameters.AddWithValue("@contact", $"%{contact}%");
+
+                using (var reader = cmd.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        var checkout = new Checkouts
+                        {
+                            CheckoutId = reader.GetInt32(0),
+                            MemberId = reader.GetInt32(2),
+                            BookId = reader.GetInt32(1),
+                            CheckoutDate = reader.GetDateTime(3),
+                            ReturnDate = !reader.IsDBNull(4) ? reader.GetDateTime(4) : (DateTime?)null,
+                            Name = reader.GetString(5),
+                            Title = reader.GetString(6)
+                        };
+                        checkouts.Add(checkout);
+                    }
+                }
+
+                return checkouts;
+            }
+        }
+
+
 
 
     }

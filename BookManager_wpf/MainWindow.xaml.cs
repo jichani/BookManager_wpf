@@ -97,7 +97,11 @@ namespace BookManager_wpf
 
                             memberStatusGrid.ItemsSource = members;
                             memberStatusAdminGrid.ItemsSource = members;
-                            checkoutStatusGrid.ItemsSource = checkouts;
+                            
+                            checkoutAllGrid.ItemsSource = checkouts;
+
+                            var checkoutsNotReturned = checkouts.Where(c => c.IsReturned == false).ToList();
+                            checkoutStatusGrid.ItemsSource = checkoutsNotReturned;
                         }
                     }
                     else
@@ -530,6 +534,13 @@ namespace BookManager_wpf
                 return;
             }
 
+            // 책의 가용 수량 확인
+            if (selectedBook.QuantityAvailable <= 0)
+            {
+                MessageBox.Show("더 이상 대여할 수 없는 도서입니다.");
+                return;
+            }
+
             if (selectedMember.AvailableBookCount <= 0)
             {
                 MessageBox.Show("더 이상 대출이 불가능합니다.");
@@ -563,11 +574,23 @@ namespace BookManager_wpf
 
             // checkoutStatusGrid 업데이트
             checkoutStatusGrid.ItemsSource = null;
-            checkoutStatusGrid.ItemsSource = checkouts;
+            var checkoutsNotReturned = checkouts.Where(c => c.IsReturned == false).ToList();
+            checkoutStatusGrid.ItemsSource = checkoutsNotReturned;
+
+            checkoutAllGrid.ItemsSource = null;
+            checkoutAllGrid.ItemsSource = checkouts;
 
             UpdateLabelsAndGrid(bookId);
             UpdateMembersGrid();
-            
+
+            UpdateBooksGrid();
+        }
+
+        private void UpdateBooksGrid()
+        {
+            var books = dataManager.LoadBooks();
+            bookStatusGrid.ItemsSource = null;
+            bookStatusGrid.ItemsSource = books;
         }
 
         // 새로운 함수: 회원 데이터 그리드 업데이트 
@@ -616,6 +639,16 @@ namespace BookManager_wpf
                 return;
             }
 
+            // 연체 상태 확인
+            var checkout = dataManager.GetCheckoutByBookAndMemberId(bookId, memberId);
+            if (checkout != null && checkout.IsOverdue)
+            {
+                MessageBoxResult result = MessageBox.Show("이 책은 연체 상태입니다. 그래도 반납하시겠습니까?", "연체 알림", MessageBoxButton.YesNo);
+
+                if (result == MessageBoxResult.No)
+                    return;
+            }
+
             // DataManager의 ReturnBook 메소드 호출하여 책 반납 처리
             bool success = dataManager.ReturnBook(bookId, memberId);
 
@@ -623,7 +656,13 @@ namespace BookManager_wpf
             {
                 MessageBox.Show("도서가 성공적으로 반납되었습니다.");
 
-                string logMessage = $"[{DateTime.Now}] 회원 {memberName}이(가) '{bookTitle}' 도서를 반납하였습니다.";
+                // 로그 메시지 설정
+                string logMessage;
+                if (checkout != null && checkout.IsOverdue)
+                    logMessage = $"[{DateTime.Now}] 회원 {memberName}이(가) '{bookTitle}' 도서를 연체 반납하였습니다.";
+                else
+                    logMessage = $"[{DateTime.Now}] 회원 {memberName}이(가) '{bookTitle}' 도서를 반납하였습니다.";
+
                 checkoutLogs.Items.Insert(0, logMessage);
 
                 // 로그 메시지를 텍스트 파일에 추가
@@ -639,7 +678,11 @@ namespace BookManager_wpf
 
                 // checkoutStatusGrid 업데이트
                 checkoutStatusGrid.ItemsSource = null;
-                checkoutStatusGrid.ItemsSource = checkouts;
+                var checkoutsNotReturned = checkouts.Where(c => c.IsReturned == false).ToList();
+                checkoutStatusGrid.ItemsSource = checkoutsNotReturned;
+
+                checkoutAllGrid.ItemsSource = null;
+                checkoutAllGrid.ItemsSource = checkouts;
 
                 UpdateLabelsAndGrid(bookId);
                 UpdateMembersGrid();

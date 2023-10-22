@@ -139,7 +139,6 @@ namespace BookManager_wpf
             }
         }
 
-
         public void UpdateMember(Members updatedMember)
         {
             using (var connection = new MySqlConnection(connectionString))
@@ -220,8 +219,9 @@ namespace BookManager_wpf
                             Description = reader.GetString("description"),
                             Publisher = reader.GetString("publisher"),
                             PublicationDate = reader.GetString("publication_date"),
-                            Quantity = reader.GetString("quantity"),
-                            RegisteredDate = reader.GetDateTime("registered_date")
+                            QuantityAvailable = GetAvailableCopies(reader.GetInt32(0)), // 추가된 부분
+                            Quantity = reader.GetString("quantity"), // 수정된 부분: 'Quantity'가 일반적으로 정수형입니다.
+                            RegisteredDate = Convert.ToDateTime(reader["registered_date"]) // 수정된 부분: DateTime으로 변환합니다.
                         };
                     }
                     else
@@ -231,6 +231,7 @@ namespace BookManager_wpf
                 }
             }
         }
+
         public void UpdateBook(Books updatedBook)
         {
             using (var connection = new MySqlConnection(connectionString))
@@ -395,9 +396,24 @@ namespace BookManager_wpf
                 // 이 경우, COUNT(*) 결과가 됩니다.
                 int checkedOutCopiesCount = Convert.ToInt32(cmd.ExecuteScalar());
 
-                Books book = GetBookById(bookId);
+                int quantityOfBook = GetQuantityOfBook(bookId); // 새롭게 추가된 부분
 
-                return Convert.ToInt32(book.Quantity) - checkedOutCopiesCount;
+                return quantityOfBook - checkedOutCopiesCount;
+            }
+        }
+
+        public int GetQuantityOfBook(int bookId)
+        {
+            using (var connection = new MySqlConnection(connectionString))
+            {
+                connection.Open();
+
+                string query = "SELECT quantity FROM books WHERE book_id = @bookId";
+
+                MySqlCommand cmd = new MySqlCommand(query, connection);
+                cmd.Parameters.AddWithValue("@bookId", bookId);
+
+                return Convert.ToInt32(cmd.ExecuteScalar());
             }
         }
 
@@ -483,8 +499,8 @@ namespace BookManager_wpf
             {
                 connection.Open();
 
-                // return_date가 NULL인 레코드만 선택하는 쿼리로 변경
-                string query = "SELECT * FROM checkouts WHERE return_date IS NULL";
+                // 모든 레코드를 선택하는 쿼리로 변경
+                string query = "SELECT * FROM checkouts";
 
                 MySqlCommand cmd = new MySqlCommand(query, connection);
 
@@ -500,7 +516,7 @@ namespace BookManager_wpf
                             CheckoutDate = reader.GetDateTime(3),
                             ReturnDate = !reader.IsDBNull(4) ? reader.GetDateTime(4) : (DateTime?)null, // null을 처리하기 위해 사용합니다.
                             Name = reader.GetString(5),
-                            Title = reader.GetString(6) 
+                            Title = reader.GetString(6)
                         };
                         checkouts.Add(checkout);
                     }
@@ -509,6 +525,7 @@ namespace BookManager_wpf
 
             return checkouts;
         }
+
 
 
         public int GetOverdueBookCount()
@@ -544,6 +561,42 @@ namespace BookManager_wpf
                 return Math.Max(0, 3 - checkedOutBooksCount); // 최대 3권에서 현재 대출 중인 도서수를 뺀다.
             }
         }
+
+        public Checkouts GetCheckoutByBookAndMemberId(int bookId, int memberId)
+        {
+            using (var connection = new MySqlConnection(connectionString))
+            {
+                connection.Open();
+
+                string query = "SELECT * FROM checkouts WHERE book_id = @bookId AND member_id= @memberId AND return_date IS NULL";
+
+                MySqlCommand cmd = new MySqlCommand(query, connection);
+                cmd.Parameters.AddWithValue("@bookId", bookId);
+                cmd.Parameters.AddWithValue("@memberId", memberId);
+
+                using (var reader = cmd.ExecuteReader())
+                {
+                    if (reader.Read())
+                    {
+                        return new Checkouts
+                        {
+                            CheckoutId = reader.GetInt32(0),
+                            MemberId = reader.GetInt32(2),
+                            BookId = reader.GetInt32(1),
+                            CheckoutDate = reader.GetDateTime(3),
+                            ReturnDate = !reader.IsDBNull(4) ? reader.GetDateTime(4) : (DateTime?)null,
+                            Name = reader.GetString(5),
+                            Title = reader.GetString(6)
+                        };
+                    }
+                    else
+                    {
+                        return null;
+                    }
+                }
+            }
+        }
+
 
     }
 }

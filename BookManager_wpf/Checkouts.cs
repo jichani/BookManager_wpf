@@ -25,6 +25,14 @@ namespace BookManager_wpf.Models
             }
         }
 
+        public bool IsReturned
+        {
+            get
+            {
+                return ReturnDate.HasValue;
+            }
+        }
+
         // ToString 메서드 오버라이딩. 각 속성을 문자열로 변환하여 출력.
         public override string ToString()
         {
